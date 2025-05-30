@@ -258,8 +258,8 @@ export default function ProjectDetailPage() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
+              </div>
+            </div>
 
         {/* Content */}
         <div className="container mx-auto px-4 py-12">

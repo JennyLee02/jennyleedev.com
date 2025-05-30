@@ -16,7 +16,7 @@ interface DSAPost {
   description: string
   content: string
   category: string
-  difficulty: "Beginner" | "Intermediate" | "Advanced"
+  difficulty: string
   tags: string[]
   readTime: number
   createdAt: string
@@ -29,95 +29,54 @@ export default function DSAPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
 
-  // Mock data for now - later we'll fetch from API
-  const mockPosts: DSAPost[] = [
-    {
-      id: "1",
-      title: "Understanding Time and Space Complexity",
-      slug: "time-space-complexity",
-      description: "A comprehensive guide to analyzing algorithm efficiency using Big O notation.",
-      content: "",
-      category: "Fundamentals",
-      difficulty: "Beginner",
-      tags: ["Big O", "Complexity Analysis", "Performance"],
-      readTime: 8,
-      createdAt: "2024-01-15",
-      updatedAt: "2024-01-15"
-    },
-    {
-      id: "2",
-      title: "Arrays and Dynamic Arrays",
-      slug: "arrays-dynamic-arrays",
-      description: "Deep dive into array data structures, operations, and when to use them.",
-      content: "",
-      category: "Data Structures",
-      difficulty: "Beginner",
-      tags: ["Arrays", "Dynamic Arrays", "Data Structures"],
-      readTime: 12,
-      createdAt: "2024-01-20",
-      updatedAt: "2024-01-20"
-    },
-    {
-      id: "3",
-      title: "Binary Search Trees: Implementation and Applications",
-      slug: "binary-search-trees",
-      description: "Learn about BST properties, operations, and real-world applications.",
-      content: "",
-      category: "Data Structures",
-      difficulty: "Intermediate",
-      tags: ["Trees", "BST", "Search", "Insertion", "Deletion"],
-      readTime: 15,
-      createdAt: "2024-01-25",
-      updatedAt: "2024-01-25"
-    },
-    {
-      id: "4",
-      title: "Graph Algorithms: DFS and BFS",
-      slug: "graph-dfs-bfs",
-      description: "Explore graph traversal algorithms and their practical implementations.",
-      content: "",
-      category: "Algorithms",
-      difficulty: "Intermediate",
-      tags: ["Graphs", "DFS", "BFS", "Traversal"],
-      readTime: 18,
-      createdAt: "2024-02-01",
-      updatedAt: "2024-02-01"
-    },
-    {
-      id: "5",
-      title: "Dynamic Programming: From Beginner to Expert",
-      slug: "dynamic-programming-guide",
-      description: "Master the art of dynamic programming with examples and patterns.",
-      content: "",
-      category: "Algorithms",
-      difficulty: "Advanced",
-      tags: ["Dynamic Programming", "Optimization", "Memoization"],
-      readTime: 25,
-      createdAt: "2024-02-10",
-      updatedAt: "2024-02-10"
-    }
-  ]
-
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setPosts(mockPosts)
-      setLoading(false)
-    }, 500)
+    fetchPosts()
   }, [])
 
-  const categories = ["all", ...Array.from(new Set(mockPosts.map(post => post.category)))]
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch("/api/dsa")
+      if (response.ok) {
+        const data = await response.json()
+        setPosts(data)
+      } else {
+        setError("Failed to fetch DSA posts")
+      }
+    } catch (error) {
+      console.error("Failed to fetch DSA posts:", error)
+      setError("Failed to fetch DSA posts")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Get unique categories from posts
+  const categories = Array.from(new Set(posts.map(post => post.category)))
+
+  // Filter posts based on selected category
   const filteredPosts = selectedCategory === "all" 
     ? posts 
     : posts.filter(post => post.category === selectedCategory)
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Beginner": return "bg-green-100 text-green-800 border-green-200"
-      case "Intermediate": return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      case "Advanced": return "bg-red-100 text-red-800 border-red-200"
-      default: return "bg-gray-100 text-gray-800 border-gray-200"
+      case "Easy":
+        return "bg-green-100 text-green-800 border-green-200"
+      case "Medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200"
+      case "Hard":
+        return "bg-red-100 text-red-800 border-red-200"
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200"
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
   }
 
   if (loading) {
@@ -125,9 +84,25 @@ export default function DSAPage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto mb-12 text-center">
+          <div className="max-w-3xl mx-auto mb-12 text-center">
             <h1 className="text-4xl font-bold mb-4">Data Structures & Algorithms</h1>
-            <p className="text-muted-foreground">Loading content...</p>
+            <p className="text-muted-foreground">Loading DSA posts...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <div className="max-w-3xl mx-auto mb-12 text-center">
+            <h1 className="text-4xl font-bold mb-4">Data Structures & Algorithms</h1>
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={fetchPosts}>Try Again</Button>
           </div>
         </main>
         <Footer />
@@ -138,117 +113,118 @@ export default function DSAPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      
       <main className="flex-1 container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto mb-12 text-center">
+        <div className="max-w-3xl mx-auto mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">Data Structures & Algorithms</h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Deep dive into computer science fundamentals. Explore theoretical concepts, 
-            implementation details, and practical applications of data structures and algorithms.
+          <p className="text-muted-foreground mb-6">
+            Master the fundamentals of computer science with comprehensive guides and practical examples
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <BookOpen size={16} />
+              <span>{posts.length} Posts Available</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={16} />
+              <span>Updated Regularly</span>
+            </div>
+          </div>
         </div>
 
         {/* Category Filter */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === category
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
+        {categories.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Browse by Category</h2>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={selectedCategory === "all" ? "default" : "outline"}
+                onClick={() => setSelectedCategory("all")}
+                size="sm"
               >
-                {category === "all" ? "All Topics" : category}
-              </button>
-            ))}
+                All Categories ({posts.length})
+              </Button>
+              {categories.map((category) => {
+                const count = posts.filter(post => post.category === category).length
+                return (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(category)}
+                    size="sm"
+                  >
+                    {category} ({count})
+                  </Button>
+                )
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Posts Grid */}
-        <div className="max-w-6xl mx-auto">
-          {filteredPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No posts found</h3>
-              <p className="text-muted-foreground">
-                {selectedCategory === "all" 
-                  ? "Check back later for new content!" 
-                  : `No posts found in ${selectedCategory} category.`
-                }
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredPosts.map((post) => (
-                <Link 
-                  key={post.id} 
-                  href={`/dsa/${post.slug}`}
-                  className="group"
-                >
-                  <Card className="h-full cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-primary/50">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          {post.category}
-                        </Badge>
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${getDifficultyColor(post.difficulty)}`}
-                        >
-                          {post.difficulty}
-                        </Badge>
-                      </div>
-                      <CardTitle className="group-hover:text-primary transition-colors duration-300 leading-tight">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription className="line-clamp-2">
-                        {post.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          <span>{post.readTime} min read</span>
-                        </div>
-                        <ArrowRight className="h-4 w-4 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {post.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {post.tags.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{post.tags.length - 3} more
-                          </Badge>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Call to Action */}
-        <div className="max-w-4xl mx-auto mt-16 text-center">
-          <div className="bg-muted/50 rounded-lg p-8">
-            <h2 className="text-2xl font-bold mb-4">Want to Suggest a Topic?</h2>
-            <p className="text-muted-foreground mb-6">
-              Have a specific data structure or algorithm you'd like to see explained? 
-              I'm always looking for new topics to explore.
+        {filteredPosts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg mb-4">
+              {selectedCategory === "all" ? "No DSA posts available yet." : `No posts found in "${selectedCategory}" category.`}
             </p>
-            <Button asChild>
-              <Link href="/contact">Get in Touch</Link>
-            </Button>
+            {selectedCategory !== "all" && (
+              <Button onClick={() => setSelectedCategory("all")} variant="outline">
+                View All Posts
+              </Button>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {filteredPosts.map((post) => (
+              <Card key={post.id} className="overflow-hidden h-full flex flex-col group hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <Badge className={getDifficultyColor(post.difficulty)}>
+                      {post.difficulty}
+                    </Badge>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Clock size={14} className="mr-1" />
+                      {post.readTime} min
+                    </div>
+                  </div>
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    {post.title}
+                  </CardTitle>
+                  <CardDescription>
+                    {post.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow pt-0 flex flex-col">
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {post.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {post.tags.length > 3 && (
+                      <Badge variant="secondary" className="text-xs">
+                        +{post.tags.length - 3} more
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between mt-auto pt-4">
+                    <div className="text-sm text-muted-foreground">
+                      {formatDate(post.createdAt)}
+                    </div>
+                    <Link href={`/dsa/${post.slug}`}>
+                      <Button size="sm" className="group/btn hover:bg-primary hover:scale-105 transition-all duration-300 hover:shadow-md">
+                        Read More
+                        <ArrowRight size={14} className="ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </main>
+
       <Footer />
     </div>
   )

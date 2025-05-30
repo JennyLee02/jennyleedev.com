@@ -15,6 +15,7 @@ export default function LoginPage() {
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    console.log("Form submitted - onSubmit called")
     setIsLoading(true)
     setError("")
 
@@ -23,11 +24,15 @@ export default function LoginPage() {
       const email = formData.get("email") as string
       const password = formData.get("password") as string
 
+      console.log("Attempting signIn with email:", email)
+
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       })
+
+      console.log("SignIn result:", result)
 
       if (result?.error) {
         setError("Invalid email or password")
@@ -71,7 +76,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={onSubmit} method="POST" action="#" className="space-y-4">
             {error && (
               <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
                 {error}

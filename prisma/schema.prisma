@@ -63,3 +63,17 @@ model RetrospectivePost {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model DSAPost {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String   @unique
+  description String
+  content     String
+  category    String
+  difficulty  String   // "Beginner", "Intermediate", "Advanced"
+  tags        String[]
+  readTime    Int      // in minutes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
