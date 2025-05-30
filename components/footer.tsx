@@ -1,0 +1,32 @@
+import Link from "next/link"
+import { Github, Linkedin, Twitter } from "lucide-react"
+
+export default function Footer() {
+  return (
+    <footer className="border-t">
+      <div className="container flex flex-col md:flex-row items-center justify-between py-8 gap-4 px-8">
+        <div className="text-center md:text-left">
+          <p className="text-sm text-muted-foreground ml-4">
+            © {new Date().getFullYear()} Jenny Lee. All rights reserved.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Github className="h-5 w-5" />
+            <span className="sr-only">GitHub</span>
+          </Link>
+          <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Linkedin className="h-5 w-5" />
+            <span className="sr-only">LinkedIn</span>
+          </Link>
+          <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Twitter className="h-5 w-5" />
+            <span className="sr-only">Twitter</span>
+          </Link>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
