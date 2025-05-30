@@ -26,6 +26,7 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/projects", label: "Projects" },
     { href: "/leetcode", label: "LeetCode" },
+    { href: "/dsa", label: "DSA" },
     { href: "/retrospective", label: "Retrospective" },
   ]
 
