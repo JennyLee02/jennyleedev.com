@@ -50,7 +50,9 @@ model LeetcodeSolution {
   approach    String
   timeComplexity String
   spaceComplexity String
+  category    String
   tags        String[]
+  leetcodeUrl String?  // Optional URL to the original LeetCode problem
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -60,6 +62,7 @@ model RetrospectivePost {
   title       String
   content     String
   tags        String[]
+  thumbnail   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -71,9 +74,9 @@ model DSAPost {
   description String
   content     String
   category    String
-  difficulty  String   // "Beginner", "Intermediate", "Advanced"
   tags        String[]
   readTime    Int      // in minutes
+  practiceQuestions Json? // Array of practice questions with multiple choice answers
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

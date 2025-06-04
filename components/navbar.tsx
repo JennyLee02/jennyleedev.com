@@ -40,24 +40,26 @@ export default function Navbar() {
       )}
     >
       <div className="container flex h-16 items-center justify-between px-6">
-        <Link href="/" className="flex items-center space-x-2 pl-4">
+        <Link href="/" className="flex items-center space-x-2">
           <span className="font-bold text-xl">Jenny Lee</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "transition-colors",
-                pathname === link.href ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground",
+                "transition-colors hover:text-foreground",
+                pathname === link.href ? "text-foreground font-medium" : "text-muted-foreground",
               )}
             >
               {link.label}
             </Link>
           ))}
-          <ThemeToggle />
+          <div className="ml-2">
+            <ThemeToggle />
+          </div>
         </nav>
 
         <Sheet>

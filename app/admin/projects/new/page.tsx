@@ -125,152 +125,155 @@ export default function NewProjectPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-4xl">
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/admin">
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <Link 
+            href="/admin/projects" 
+            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4"
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Projects
           </Link>
-        </Button>
-        <h1 className="text-3xl font-bold">Create New Project</h1>
-      </div>
+          <h1 className="text-4xl font-bold mb-2">Create New Project</h1>
+          <p className="text-muted-foreground">
+            Create a new project to showcase in your portfolio.
+          </p>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Details</CardTitle>
-          <CardDescription>
-            Fill out the information below to create a new project for your portfolio.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Project Title *</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="e.g., E-commerce Platform"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
               <div className="space-y-2">
-                <Label htmlFor="title">Project Title *</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
+                <Label htmlFor="description">Short Description *</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="e.g., E-commerce Platform"
+                  placeholder="A brief description of your project (2-3 sentences)"
+                  rows={3}
                   required
                 />
               </div>
-            </div>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Short Description *</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="A brief description of your project (2-3 sentences)"
-                rows={3}
+              {/* Markdown Content Editor */}
+              <MarkdownEditor
+                value={formData.content}
+                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                label="Project Content"
+                placeholder="Write your project description in Markdown. You can include headings, lists, code blocks, and upload images inline..."
                 required
               />
-            </div>
 
-            {/* Markdown Content Editor */}
-            <MarkdownEditor
-              value={formData.content}
-              onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-              label="Project Content"
-              placeholder="Write your project description in Markdown. You can include headings, lists, code blocks, and upload images inline..."
-              required
-            />
+              {/* Thumbnail Picker */}
+              <ThumbnailPicker
+                images={markdownImages}
+                selectedThumbnail={formData.thumbnailUrl || undefined}
+                onThumbnailChange={(thumbnailUrl) => setFormData(prev => ({ ...prev, thumbnailUrl }))}
+              />
 
-            {/* Thumbnail Picker */}
-            <ThumbnailPicker
-              images={markdownImages}
-              selectedThumbnail={formData.thumbnailUrl || undefined}
-              onThumbnailChange={(thumbnailUrl) => setFormData(prev => ({ ...prev, thumbnailUrl }))}
-            />
+              {/* Technologies */}
+              <div className="space-y-2">
+                <Label>Technologies & Tools</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={techInput}
+                    onChange={(e) => setTechInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Add technology (e.g., React, Node.js)"
+                  />
+                  <Button type="button" onClick={addTechnology} size="sm">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                {technologies.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {technologies.map((tech) => (
+                      <Badge key={tech} variant="secondary" className="pr-1">
+                        {tech}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="ml-1 h-auto p-0 text-muted-foreground hover:text-foreground"
+                          onClick={() => removeTechnology(tech)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            {/* Technologies */}
-            <div className="space-y-2">
-              <Label>Technologies & Tools</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={techInput}
-                  onChange={(e) => setTechInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Add technology (e.g., React, Node.js)"
+              {/* URLs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="githubUrl">GitHub URL</Label>
+                  <Input
+                    id="githubUrl"
+                    name="githubUrl"
+                    value={formData.githubUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://github.com/username/repo"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="liveUrl">Live Demo URL</Label>
+                  <Input
+                    id="liveUrl"
+                    name="liveUrl"
+                    value={formData.liveUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://project-demo.com"
+                  />
+                </div>
+              </div>
+
+              {/* Featured Toggle */}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="featured"
+                  checked={formData.featured}
+                  onCheckedChange={handleSwitchChange}
                 />
-                <Button type="button" onClick={addTechnology} size="sm">
-                  <Plus className="h-4 w-4" />
+                <Label htmlFor="featured">Feature this project (show prominently on homepage)</Label>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-4 pt-6">
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Creating..." : "Create Project"}
+                </Button>
+                <Button type="button" variant="outline" asChild>
+                  <Link href="/admin/projects">Cancel</Link>
                 </Button>
               </div>
-              {technologies.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {technologies.map((tech) => (
-                    <Badge key={tech} variant="secondary" className="pr-1">
-                      {tech}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="ml-1 h-auto p-0 text-muted-foreground hover:text-foreground"
-                        onClick={() => removeTechnology(tech)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* URLs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="githubUrl">GitHub URL</Label>
-                <Input
-                  id="githubUrl"
-                  name="githubUrl"
-                  value={formData.githubUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://github.com/username/repo"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="liveUrl">Live Demo URL</Label>
-                <Input
-                  id="liveUrl"
-                  name="liveUrl"
-                  value={formData.liveUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://project-demo.com"
-                />
-              </div>
-            </div>
-
-            {/* Featured Toggle */}
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="featured"
-                checked={formData.featured}
-                onCheckedChange={handleSwitchChange}
-              />
-              <Label htmlFor="featured">Feature this project (show prominently on homepage)</Label>
-            </div>
-
-            {/* Submit Buttons */}
-            <div className="flex gap-4 pt-6">
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create Project"}
-              </Button>
-              <Button type="button" variant="outline" asChild>
-                <Link href="/admin">Cancel</Link>
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </form>
+      </div>
     </div>
   )
 } 

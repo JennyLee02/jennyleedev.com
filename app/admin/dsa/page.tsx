@@ -12,7 +12,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table"
-import { Plus, Edit, Trash2 } from "lucide-react"
+import { Plus, Edit, Trash2, ArrowLeft } from "lucide-react"
 
 interface DSAPost {
   id: string
@@ -20,7 +20,6 @@ interface DSAPost {
   slug: string
   description: string
   category: string
-  difficulty: string
   tags: string[]
   readTime: number
   createdAt: string
@@ -67,19 +66,6 @@ export default function DSAAdminPage() {
     }
   }
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Easy":
-        return "bg-green-100 text-green-800"
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800"
-      case "Hard":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -94,14 +80,23 @@ export default function DSAAdminPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">DSA Posts Admin</h1>
-        <Link href="/admin/dsa/create">
-          <Button className="flex items-center gap-2">
-            <Plus size={20} />
-            Create New Post
-          </Button>
+      <div className="mb-8">
+        <Link 
+          href="/admin" 
+          className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Admin Dashboard
         </Link>
+        <div className="flex justify-between items-center">
+          <h1 className="text-4xl font-bold">DSA Posts Admin</h1>
+          <Link href="/admin/dsa/create">
+            <Button className="flex items-center gap-2">
+              <Plus size={20} />
+              Create New Post
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {posts.length === 0 ? (
@@ -117,7 +112,6 @@ export default function DSAAdminPage() {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Category</TableHead>
-              <TableHead>Difficulty</TableHead>
               <TableHead>Read Time</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Actions</TableHead>
@@ -134,11 +128,6 @@ export default function DSAAdminPage() {
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline">{post.category}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getDifficultyColor(post.difficulty)}>
-                    {post.difficulty}
-                  </Badge>
                 </TableCell>
                 <TableCell>{post.readTime} min</TableCell>
                 <TableCell>{formatDate(post.createdAt)}</TableCell>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Calendar, Github, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, Calendar, Github, ExternalLink, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/navbar"
@@ -121,6 +121,7 @@ export default function ProjectDetailPage() {
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [expandedImageIndex, setExpandedImageIndex] = useState<number | null>(null)
 
   useEffect(() => {
     async function fetchProject() {
@@ -148,6 +149,53 @@ export default function ProjectDetailPage() {
       fetchProject()
     }
   }, [slug])
+
+  // Handle keyboard navigation for expanded image
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (expandedImageIndex === null || !project) return
+
+      if (e.key === 'Escape') {
+        setExpandedImageIndex(null)
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        setExpandedImageIndex((prev) => 
+          prev === null ? null : (prev - 1 + project.imageUrls.length) % project.imageUrls.length
+        )
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        setExpandedImageIndex((prev) => 
+          prev === null ? null : (prev + 1) % project.imageUrls.length
+        )
+      }
+    }
+
+    if (expandedImageIndex !== null) {
+      document.addEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'unset'
+    }
+  }, [expandedImageIndex, project])
+
+  const navigateExpandedImage = (direction: 'prev' | 'next') => {
+    if (expandedImageIndex === null || !project) return
+
+    if (direction === 'prev') {
+      setExpandedImageIndex((prev) => 
+        prev === null ? null : (prev - 1 + project.imageUrls.length) % project.imageUrls.length
+      )
+    } else {
+      setExpandedImageIndex((prev) => 
+        prev === null ? null : (prev + 1) % project.imageUrls.length
+      )
+    }
+  }
 
   if (loading) {
     return (
@@ -312,17 +360,87 @@ export default function ProjectDetailPage() {
                 <h2 className="text-2xl font-bold mb-6">Project Gallery</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                   {project.imageUrls.map((imageUrl, index) => (
-                    <div key={index} className="relative aspect-video overflow-hidden rounded-lg border shadow-sm">
+                    <div 
+                      key={index} 
+                      className="relative aspect-video overflow-hidden rounded-lg border shadow-sm cursor-pointer group"
+                      onClick={() => setExpandedImageIndex(index)}
+                    >
                       <Image
                         src={imageUrl}
                         alt={`${project.title} - Image ${index + 1}`}
                         fill
-                        className="object-contain hover:scale-105 transition-transform duration-300 bg-muted"
+                        className="object-contain hover:scale-105 transition-transform duration-300 bg-muted group-hover:brightness-110"
                       />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="bg-black/50 text-white px-2 py-1 rounded text-sm">
+                          Click to expand
+                        </div>
+                      </div>
                     </div>
                 ))}
               </div>
             </div>
+            )}
+
+            {/* Expanded Image Modal */}
+            {expandedImageIndex !== null && project && (
+              <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center p-4">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setExpandedImageIndex(null)}
+                    className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+                  >
+                    <X className="h-8 w-8" />
+                  </button>
+
+                  {/* Previous button */}
+                  {project.imageUrls.length > 1 && (
+                    <button
+                      onClick={() => navigateExpandedImage('prev')}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10"
+                    >
+                      <ChevronLeft className="h-12 w-12" />
+                    </button>
+                  )}
+
+                  {/* Next button */}
+                  {project.imageUrls.length > 1 && (
+                    <button
+                      onClick={() => navigateExpandedImage('next')}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10"
+                    >
+                      <ChevronRight className="h-12 w-12" />
+                    </button>
+                  )}
+
+                  {/* Image counter */}
+                  {project.imageUrls.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+                      {expandedImageIndex + 1} / {project.imageUrls.length}
+                    </div>
+                  )}
+
+                  {/* Expanded image */}
+                  <div className="relative max-w-full max-h-full">
+                    <Image
+                      src={project.imageUrls[expandedImageIndex]}
+                      alt={`${project.title} - Image ${expandedImageIndex + 1}`}
+                      width={1200}
+                      height={800}
+                      className="object-contain max-w-full max-h-[90vh] rounded-lg"
+                      priority
+                    />
+                  </div>
+
+                  {/* Click outside to close */}
+                  <div 
+                    className="absolute inset-0 -z-10"
+                    onClick={() => setExpandedImageIndex(null)}
+                  />
+                </div>
+              </div>
             )}
 
             {/* Links Section */}
@@ -353,7 +471,7 @@ export default function ProjectDetailPage() {
                     </Button>
                   </Link>
                 )}
-              </div>
+            </div>
             </div>
           </div>
         </div>

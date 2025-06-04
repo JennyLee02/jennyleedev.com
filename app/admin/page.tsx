@@ -49,20 +49,20 @@ export default function AdminPage() {
         <div className="p-6 border rounded-lg">
           <h2 className="text-2xl font-semibold mb-4">LeetCode Solutions</h2>
           <p className="text-muted-foreground mb-4">
-            Add your leetcode problem solutions
+            Create and manage your LeetCode problem solutions and explanations
           </p>
           <Button asChild>
-            <Link href="/admin/leetcode/new">Add New Solution</Link>
+            <Link href="/admin/leetcode">Manage Solutions</Link>
           </Button>
         </div>
 
         <div className="p-6 border rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Retrospective Posts</h2>
+          <h2 className="text-2xl font-semibold mb-4">Retrospectives</h2>
           <p className="text-muted-foreground mb-4">
-            Write about your experiences and learnings
+            Create and manage monthly retrospective posts
           </p>
           <Button asChild>
-            <Link href="/admin/posts/new">Create New Post</Link>
+            <Link href="/admin/retrospective">Manage Retrospectives</Link>
           </Button>
         </div>
       </div>

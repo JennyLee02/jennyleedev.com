@@ -1,99 +1,79 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { CalendarIcon } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Calendar, Clock, ArrowRight } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 
+interface RetrospectivePost {
+  id: string
+  title: string
+  content: string
+  tags: string[]
+  thumbnail?: string
+  createdAt: string
+  updatedAt: string
+}
+
 export default function RetrospectivePage() {
-  const retrospectives = [
-    {
-      id: "march-2023",
-      title: "March 2023 Retrospective",
-      excerpt: "Reflecting on my progress with backend development and solving LeetCode problems.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "March 31, 2023",
-      slug: "march-2023-retrospective",
-    },
-    {
-      id: "february-2023",
-      title: "February 2023 Retrospective",
-      excerpt: "Launching my portfolio website and participating in a hackathon.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "February 28, 2023",
-      slug: "february-2023-retrospective",
-    },
-    {
-      id: "january-2023",
-      title: "January 2023 Retrospective",
-      excerpt: "Starting my journey with React and improving my JavaScript skills.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "January 31, 2023",
-      slug: "january-2023-retrospective",
-    },
-    {
-      id: "december-2022",
-      title: "December 2022 Retrospective",
-      excerpt: "Wrapping up the year and setting goals for the upcoming months.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "December 31, 2022",
-      slug: "december-2022-retrospective",
-    },
-    {
-      id: "november-2022",
-      title: "November 2022 Retrospective",
-      excerpt: "Diving deeper into backend technologies and database optimization.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "November 30, 2022",
-      slug: "november-2022-retrospective",
-    },
-    {
-      id: "october-2022",
-      title: "October 2022 Retrospective",
-      excerpt: "Learning about cloud services and deploying my first application.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "October 31, 2022",
-      slug: "october-2022-retrospective",
-    },
-    {
-      id: "september-2022",
-      title: "September 2022 Retrospective",
-      excerpt: "Exploring new frontend frameworks and improving UI/UX skills.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "September 30, 2022",
-      slug: "september-2022-retrospective",
-    },
-    {
-      id: "august-2022",
-      title: "August 2022 Retrospective",
-      excerpt: "Building my first full-stack application and learning about authentication.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "August 31, 2022",
-      slug: "august-2022-retrospective",
-    },
-    {
-      id: "july-2022",
-      title: "July 2022 Retrospective",
-      excerpt: "Starting my coding journey and setting up my development environment.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "July 31, 2022",
-      slug: "july-2022-retrospective",
-    },
-    {
-      id: "june-2022",
-      title: "June 2022 Retrospective",
-      excerpt: "Learning the fundamentals of web development and HTML/CSS.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "June 30, 2022",
-      slug: "june-2022-retrospective",
-    },
-  ]
+  const [posts, setPosts] = useState<RetrospectivePost[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch("/api/retrospective")
+      if (response.ok) {
+        const data = await response.json()
+        setPosts(data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch retrospective posts:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  const getExcerpt = (content: string) => {
+    // Remove markdown syntax and get first 80 characters to match project card height
+    const plainText = content.replace(/[#*_`[\]()]/g, '').replace(/\n/g, ' ')
+    return plainText.length > 80 ? plainText.substring(0, 80) + '...' : plainText
+  }
+
+  const calculateReadTime = (content: string) => {
+    const wordsPerMinute = 200
+    const words = content.split(/\s+/).length
+    return Math.ceil(words / wordsPerMinute)
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto mb-12 text-center">
+        <div className="max-w-4xl mx-auto mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">Monthly Retrospectives</h1>
           <p className="text-muted-foreground">
             A monthly reflection on my progress, challenges, learnings, and goals. These retrospectives help me track my
@@ -101,33 +81,64 @@ export default function RetrospectivePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {retrospectives.map((retro) => (
-            <Link key={retro.id} href={`/retrospective/${retro.slug}`} className="group">
-              <Card className="overflow-hidden h-full flex flex-col hover:shadow-md transition-shadow">
-                <div className="relative aspect-[3/2] w-full">
-                  <Image
-                    src={retro.thumbnail || "/placeholder.svg"}
-                    alt={retro.title}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                  />
-                </div>
-                <CardContent className="pt-4 pb-2 px-3 flex-grow">
-                  <h3 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                    {retro.title}
-                  </h3>
-                </CardContent>
-                <CardFooter className="px-3 pb-3 pt-0">
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <CalendarIcon className="h-3 w-3 mr-1" />
-                    {retro.date}
+        {posts.length === 0 ? (
+          <div className="text-center py-16">
+            <Calendar className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No retrospectives yet</h3>
+            <p className="text-muted-foreground">
+              Check back soon for monthly reflections and insights.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+              <Link 
+                key={post.id} 
+                href={`/retrospective/${post.id}`}
+                className="group"
+              >
+                <Card className="overflow-hidden h-full flex flex-col cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-primary/50">
+                  {post.thumbnail && (
+                    <div className="relative h-48 w-full overflow-hidden">
+                      <Image 
+                        src={post.thumbnail} 
+                        alt={post.title} 
+                        fill 
+                        className="object-cover transition-transform duration-300 group-hover:scale-105" 
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    </div>
+                  )}
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="group-hover:text-primary transition-colors duration-300">
+                        {post.title}
+                      </CardTitle>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                    <CardDescription className="line-clamp-2">
+                      {getExcerpt(post.content)}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow pt-0">
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <div className="px-6 pb-6">
+                    <div className="text-xs text-muted-foreground group-hover:text-primary transition-colors duration-300">
+                      Click to view retrospective details →
+                    </div>
                   </div>
-                </CardFooter>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
       </main>
       <Footer />
     </div>

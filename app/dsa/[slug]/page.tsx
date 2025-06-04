@@ -2,16 +2,20 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Clock, BookOpen, Tag, ChevronDown, ChevronRight } from "lucide-react"
+import { ArrowLeft, Clock, BookOpen, Tag, ChevronDown, ChevronRight, Calendar, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import rehypeHighlight from "rehype-highlight"
 import rehypeRaw from "rehype-raw"
+import { InteractivePracticeQuestions, PracticeQuestion } from "@/components/interactive-practice-questions"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+import Chatbot from "@/components/chatbot"
 
 interface DSAPost {
   id: string
@@ -20,11 +24,11 @@ interface DSAPost {
   description: string
   content: string
   category: string
-  difficulty: string
   tags: string[]
   readTime: number
   createdAt: string
   updatedAt: string
+  practiceQuestions?: PracticeQuestion[] | null
 }
 
 // Practice Dropdown Component
@@ -107,19 +111,6 @@ export default function DSADetailPage({ params }: { params: Promise<{ slug: stri
     }
   }
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Easy":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      case "Hard":
-        return "bg-red-100 text-red-800 border-red-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -177,9 +168,6 @@ export default function DSADetailPage({ params }: { params: Promise<{ slug: stri
           
           <div className="space-y-4 mb-8">
             <div className="flex flex-wrap items-center gap-3">
-              <Badge className={getDifficultyColor(post.difficulty)}>
-                {post.difficulty}
-              </Badge>
               <Badge variant="outline">{post.category}</Badge>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Clock size={14} />
@@ -316,10 +304,24 @@ export default function DSADetailPage({ params }: { params: Promise<{ slug: stri
               </div>
             </CardContent>
           </Card>
+
+          {/* Interactive Practice Questions */}
+          {post.practiceQuestions && post.practiceQuestions.length > 0 && (
+            <InteractivePracticeQuestions questions={post.practiceQuestions} />
+          )}
         </div>
       </main>
 
       <Footer />
+
+      {/* Study Assistant Chatbot */}
+      <Chatbot 
+        problemContext={{
+          title: post.title,
+          difficulty: "Medium", // DSA posts don't have difficulty, using default
+          category: post.category
+        }}
+      />
     </div>
   )
 } 

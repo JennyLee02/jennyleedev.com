@@ -97,24 +97,24 @@ export default function AdminProjectsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/admin">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Link>
-          </Button>
-          <h1 className="text-3xl font-bold">Manage Projects</h1>
-        </div>
-        
-        <Button asChild>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <Link 
+          href="/admin" 
+          className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Admin Dashboard
+        </Link>
+        <div className="flex justify-between items-center">
+          <h1 className="text-4xl font-bold">Manage Projects</h1>
           <Link href="/admin/projects/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Create New Project
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create New Project
+            </Button>
           </Link>
-        </Button>
+        </div>
       </div>
 
       {projects.length === 0 ? (

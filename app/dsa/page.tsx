@@ -16,7 +16,6 @@ interface DSAPost {
   description: string
   content: string
   category: string
-  difficulty: string
   tags: string[]
   readTime: number
   createdAt: string
@@ -58,19 +57,6 @@ export default function DSAPage() {
     ? posts 
     : posts.filter(post => post.category === selectedCategory)
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Easy":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      case "Hard":
-        return "bg-red-100 text-red-800 border-red-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -84,7 +70,7 @@ export default function DSAPage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="max-w-3xl mx-auto mb-12 text-center">
+          <div className="max-w-4xl mx-auto mb-12 text-center">
             <h1 className="text-4xl font-bold mb-4">Data Structures & Algorithms</h1>
             <p className="text-muted-foreground">Loading DSA posts...</p>
           </div>
@@ -99,7 +85,7 @@ export default function DSAPage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="max-w-3xl mx-auto mb-12 text-center">
+          <div className="max-w-4xl mx-auto mb-12 text-center">
             <h1 className="text-4xl font-bold mb-4">Data Structures & Algorithms</h1>
             <p className="text-red-500 mb-4">{error}</p>
             <Button onClick={fetchPosts}>Try Again</Button>
@@ -115,7 +101,7 @@ export default function DSAPage() {
       <Navbar />
       
       <main className="flex-1 container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto mb-12 text-center">
+        <div className="max-w-4xl mx-auto mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">Data Structures & Algorithms</h1>
           <p className="text-muted-foreground mb-6">
             Master the fundamentals of computer science with comprehensive guides and practical examples
@@ -174,14 +160,12 @@ export default function DSAPage() {
             )}
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredPosts.map((post) => (
               <Card key={post.id} className="overflow-hidden h-full flex flex-col group hover:shadow-lg transition-shadow duration-300">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between mb-2">
-                    <Badge className={getDifficultyColor(post.difficulty)}>
-                      {post.difficulty}
-                    </Badge>
+                    <Badge variant="outline">{post.category}</Badge>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Clock size={14} className="mr-1" />
                       {post.readTime} min

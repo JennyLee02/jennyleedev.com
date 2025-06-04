@@ -88,7 +88,7 @@ export default function ProjectsPage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="max-w-3xl mx-auto mb-12 text-center">
+          <div className="max-w-4xl mx-auto mb-12 text-center">
             <h1 className="text-4xl font-bold mb-4">My Projects</h1>
             <p className="text-red-500">{error}</p>
           </div>
@@ -102,7 +102,7 @@ export default function ProjectsPage() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto mb-12 text-center">
+        <div className="max-w-4xl mx-auto mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">My Projects</h1>
           <p className="text-muted-foreground">
             A collection of my recent work, personal projects, and experiments. Each project represents different skills

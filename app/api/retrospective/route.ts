@@ -3,15 +3,15 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET() {
   try {
-    const posts = await prisma.dSAPost.findMany({
+    const posts = await prisma.retrospectivePost.findMany({
       orderBy: { createdAt: 'desc' }
     })
     
     return NextResponse.json(posts)
   } catch (error) {
-    console.error("Failed to fetch DSA posts:", error)
+    console.error("Failed to fetch retrospective posts:", error)
     return NextResponse.json(
-      { error: "Failed to fetch DSA posts" },
+      { error: "Failed to fetch retrospective posts" },
       { status: 500 }
     )
   }
@@ -19,26 +19,22 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, slug, description, content, category, tags, readTime, practiceQuestions } = await request.json()
+    const { title, content, tags, thumbnail } = await request.json()
     
-    const post = await prisma.dSAPost.create({
+    const post = await prisma.retrospectivePost.create({
       data: {
         title,
-        slug,
-        description,
         content,
-        category,
         tags,
-        readTime: parseInt(readTime) || 5,
-        practiceQuestions: practiceQuestions || null,
+        ...(thumbnail && { thumbnail }),
       },
     })
     
     return NextResponse.json(post)
   } catch (error) {
-    console.error("Failed to create DSA post:", error)
+    console.error("Failed to create retrospective post:", error)
     return NextResponse.json(
-      { error: "Failed to create DSA post" },
+      { error: "Failed to create retrospective post" },
       { status: 500 }
     )
   }

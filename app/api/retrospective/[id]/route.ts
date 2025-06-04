@@ -7,19 +7,19 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const post = await prisma.dSAPost.findUnique({
+    const post = await prisma.retrospectivePost.findUnique({
       where: { id },
     })
 
     if (!post) {
-      return NextResponse.json({ error: "DSA post not found" }, { status: 404 })
+      return NextResponse.json({ error: "Retrospective post not found" }, { status: 404 })
     }
 
     return NextResponse.json(post)
   } catch (error) {
-    console.error("Failed to fetch DSA post:", error)
+    console.error("Failed to fetch retrospective post:", error)
     return NextResponse.json(
-      { error: "Failed to fetch DSA post" },
+      { error: "Failed to fetch retrospective post" },
       { status: 500 }
     )
   }
@@ -31,27 +31,23 @@ export async function PUT(
 ) {
   try {
     const { id } = await params
-    const { title, slug, description, content, category, tags, readTime, practiceQuestions } = await request.json()
+    const { title, content, tags, thumbnail } = await request.json()
 
-    const post = await prisma.dSAPost.update({
+    const post = await prisma.retrospectivePost.update({
       where: { id },
       data: {
         title,
-        slug,
-        description,
         content,
-        category,
         tags,
-        readTime: parseInt(readTime) || 5,
-        practiceQuestions: practiceQuestions || null,
+        ...(thumbnail !== undefined && { thumbnail }),
       },
     })
 
     return NextResponse.json(post)
   } catch (error) {
-    console.error("Failed to update DSA post:", error)
+    console.error("Failed to update retrospective post:", error)
     return NextResponse.json(
-      { error: "Failed to update DSA post" },
+      { error: "Failed to update retrospective post" },
       { status: 500 }
     )
   }
@@ -63,15 +59,15 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    await prisma.dSAPost.delete({
+    await prisma.retrospectivePost.delete({
       where: { id },
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Failed to delete DSA post:", error)
+    console.error("Failed to delete retrospective post:", error)
     return NextResponse.json(
-      { error: "Failed to delete DSA post" },
+      { error: "Failed to delete retrospective post" },
       { status: 500 }
     )
   }

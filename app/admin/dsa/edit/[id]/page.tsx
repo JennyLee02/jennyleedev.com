@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft } from "lucide-react"
 import { MarkdownEditor } from "@/components/markdown-editor"
+import { PracticeQuestionsEditor, PracticeQuestion } from "@/components/practice-questions-editor"
 
 interface DSAPost {
   id: string
@@ -17,9 +20,9 @@ interface DSAPost {
   description: string
   content: string
   category: string
-  difficulty: string
   tags: string[]
   readTime: number
+  practiceQuestions?: PracticeQuestion[] | null
 }
 
 export default function EditDSAPostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -27,37 +30,38 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
   const [id, setId] = useState<string>("")
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
+  const [practiceQuestions, setPracticeQuestions] = useState<PracticeQuestion[]>([])
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
     description: "",
     content: "",
     category: "",
-    difficulty: "",
     tags: "",
     readTime: "5"
   })
 
   const categories = [
-    "Arrays",
-    "Strings", 
-    "Linked Lists",
-    "Trees",
-    "Graphs",
     "Dynamic Programming",
-    "Sorting",
-    "Searching",
+    "Graph Algorithms", 
+    "Greedy Algorithms",
+    "Sorting Algorithms",
+    "Divide and Conquer",
+    "Tree Algorithms",
     "Hash Tables",
-    "Stacks & Queues",
-    "Recursion",
-    "Backtracking",
-    "Greedy",
+    "Searching Algorithms",
+    "Array Techniques",
+    "String Algorithms",
+    "Linked List Operations",
+    "Stack & Queue",
+    "Recursion & Backtracking",
     "Two Pointers",
     "Sliding Window",
-    "Binary Search"
+    "Binary Search",
+    "Heap & Priority Queue",
+    "Trie",
+    "Union Find"
   ]
-
-  const difficulties = ["Easy", "Medium", "Hard"]
 
   useEffect(() => {
     const getId = async () => {
@@ -84,10 +88,10 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
           description: post.description,
           content: post.content,
           category: post.category,
-          difficulty: post.difficulty,
           tags: post.tags.join(', '),
           readTime: post.readTime.toString()
         })
+        setPracticeQuestions(post.practiceQuestions || [])
       }
     } catch (error) {
       console.error("Failed to fetch DSA post:", error)
@@ -118,6 +122,7 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
         body: JSON.stringify({
           ...formData,
           tags: tagsArray,
+          practiceQuestions,
         }),
       })
 
@@ -140,9 +145,21 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Edit DSA Post</h1>
+        <div className="mb-8">
+          <Link 
+            href="/admin/dsa" 
+            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to DSA Posts
+          </Link>
+          <h1 className="text-4xl font-bold mb-2">Edit DSA Post</h1>
+          <p className="text-muted-foreground">
+            Update the educational post about algorithms and data structures concepts.
+          </p>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <Card>
             <CardHeader>
               <CardTitle>Basic Information</CardTitle>
@@ -150,17 +167,17 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="title">Title</Label>
+                  <Label htmlFor="title" className="mb-2 block">Title</Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="e.g., Two Sum Problem"
+                    placeholder="e.g., Understanding Big-O Notation"
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="slug">Slug</Label>
+                  <Label htmlFor="slug" className="mb-2 block">Slug</Label>
                   <Input
                     id="slug"
                     value={formData.slug}
@@ -172,20 +189,20 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
               </div>
 
               <div>
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description" className="mb-2 block">Description</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Brief description of the problem..."
+                  placeholder="Brief description of the algorithm or data structure concept..."
                   rows={3}
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category" className="mb-2 block">Category</Label>
                   <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -201,23 +218,7 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 <div>
-                  <Label htmlFor="difficulty">Difficulty</Label>
-                  <Select value={formData.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select difficulty" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {difficulties.map((difficulty) => (
-                        <SelectItem key={difficulty} value={difficulty}>
-                          {difficulty}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="readTime">Read Time (minutes)</Label>
+                  <Label htmlFor="readTime" className="mb-2 block">Read Time (minutes)</Label>
                   <Input
                     id="readTime"
                     type="number"
@@ -231,12 +232,12 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
               </div>
 
               <div>
-                <Label htmlFor="tags">Tags (comma-separated)</Label>
+                <Label htmlFor="tags" className="mb-2 block">Tags (comma-separated)</Label>
                 <Input
                   id="tags"
                   value={formData.tags}
                   onChange={(e) => handleInputChange('tags', e.target.value)}
-                  placeholder="leetcode, easy, array, hash-table"
+                  placeholder="algorithm, theory, optimization, complexity"
                 />
               </div>
             </CardContent>
@@ -250,7 +251,19 @@ export default function EditDSAPostPage({ params }: { params: Promise<{ id: stri
               <MarkdownEditor
                 value={formData.content}
                 onChange={(value) => handleInputChange('content', value)}
-                placeholder="Write your DSA solution explanation here..."
+                placeholder="Write your educational content about the algorithm or data structure..."
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Practice Questions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PracticeQuestionsEditor
+                questions={practiceQuestions}
+                onChange={setPracticeQuestions}
               />
             </CardContent>
           </Card>
