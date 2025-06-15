@@ -22,14 +22,16 @@ export async function GET(
     // Try to find by ID first, then by slug
     let project
     
-    // Check if the id is a valid MongoDB ObjectId (24 characters) or UUID
-    if (id.length === 24 || id.includes('-')) {
+    // Check if the id is a valid MongoDB ObjectId (exactly 24 hexadecimal characters)
+    const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(id)
+    
+    if (isValidObjectId) {
       project = await prisma.project.findUnique({
         where: { id }
       })
     }
     
-    // If not found by ID, try by slug
+    // If not found by ID or if it's not a valid ObjectId, try by slug
     if (!project) {
       project = await prisma.project.findUnique({
         where: { slug: id }
