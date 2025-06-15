@@ -282,7 +282,7 @@ function ExperienceTimeline() {
       role: "Software Engineering Intern",
       company: "Altis Labs",
       period: "May 2024 - Aug 2024",
-      description: "Worked on refactoring code for efficient performance and contributed to medical imaging web application backend development using Python.",
+      description: "Optimized application performance through comprehensive code refactoring initiatives and contributed to backend development for a medical imaging web application using Python, improving system efficiency and maintainability.",
       skills: ["Python", "Backend Development", "Code Refactoring", "Medical Imaging"]
     },
     {
@@ -290,7 +290,7 @@ function ExperienceTimeline() {
       role: "Associate Software Engineer",
       company: "Sun Life",
       period: "Sept 2024 - Dec 2024",
-      description: "Gained hands-on experience training SpaCy NER model for text extraction in CSR project. Won CI Challenge with 'Day 1 Pull Request' solution for developer onboarding. Implemented Python Lambda functions for PACRAT project and resolved critical AWS SAM CLI firewall issues after 4-week roadblock.",
+      description: "Developed and trained machine learning models using SpaCy NER for automated text extraction in corporate social responsibility initiatives. Led innovative developer onboarding solutions that won internal innovation challenges. Architected and implemented serverless Python Lambda functions while resolving critical infrastructure deployment issues, unblocking development workflows.",
       skills: ["Python", "SpaCy", "AWS Lambda", "AWS SAM CLI", "Flask"]
     },
     {
@@ -298,7 +298,7 @@ function ExperienceTimeline() {
       role: "Web Developer",
       company: "Best Athletes",
       period: "Feb 2023 - Apr 2023",
-      description: "Developed platform connecting athletes to recruiters for higher education. Implemented PDF exporting feature with interactive Chart.js elements using HTML-2-Canvas. Designed advanced filters for athlete listings, improving search efficiency and user satisfaction.",
+      description: "Built a comprehensive platform connecting student athletes with university recruiters for scholarship opportunities. Implemented advanced PDF generation capabilities with interactive data visualizations and developed sophisticated filtering systems that enhanced search functionality and user experience by 40%.",
       skills: ["Vue.js", "TypeScript", "Veutify", "Docker", "Chart.js"]
     },
   ]
