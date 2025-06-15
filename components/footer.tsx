@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Github, Linkedin, Twitter } from "lucide-react"
+import { Github, Linkedin } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -12,17 +12,23 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-6">
-          <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            href="https://github.com/JennyLee02" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
-          <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            href="https://www.linkedin.com/in/jenny-lee02/" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
             <Linkedin className="h-5 w-5" />
             <span className="sr-only">LinkedIn</span>
-          </Link>
-          <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            <Twitter className="h-5 w-5" />
-            <span className="sr-only">Twitter</span>
           </Link>
         </div>
       </div>

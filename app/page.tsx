@@ -10,10 +10,26 @@ import { Github, Linkedin, Mail, ArrowRight, MousePointer } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { cn } from "@/lib/utils"
+import { 
+  SiReact, 
+  SiNextdotjs, 
+  SiTypescript, 
+  SiNodedotjs, 
+  SiPython, 
+  SiCplusplus, 
+  SiMongodb, 
+  SiPostgresql, 
+  SiAmazon, 
+  SiDocker, 
+  SiGit, 
+  SiTailwindcss,
+  SiJavascript
+} from "react-icons/si"
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const techStackRef = useRef<HTMLDivElement>(null)
+  
   const skills = [
     "React",
     "Next.js",
@@ -26,6 +42,21 @@ export default function Home() {
     "Git",
     "AWS",
     "Docker",
+  ]
+
+  const techStack = [
+    { name: "React", icon: SiReact, color: "#61DAFB" },
+    { name: "Next.js", icon: SiNextdotjs, color: "#000000" },
+    { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
+    { name: "Node.js", icon: SiNodedotjs, color: "#339933" },
+    { name: "Python", icon: SiPython, color: "#3776AB" },
+    { name: "C++", icon: SiCplusplus, color: "#00599C" },
+    { name: "MongoDB", icon: SiMongodb, color: "#47A248" },
+    { name: "SQL", icon: SiPostgresql, color: "#336791" },
+    { name: "AWS", icon: SiAmazon, color: "#FF9900" },
+    { name: "Docker", icon: SiDocker, color: "#2496ED" },
+    { name: "Git", icon: SiGit, color: "#F05032" },
+    { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4" },
   ]
 
   return (
@@ -93,8 +124,8 @@ export default function Home() {
                   className="relative overflow-hidden border-2 border-zinc-200 dark:border-zinc-700 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-foreground transform transition-all duration-300 group" 
                   asChild
                 >
-                  <Link href="#contact" className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4" /> Contact Me
+                  <Link href="mailto:j234lee@uwaterloo.ca" className="flex items-center">
+                    <Mail className="mr-2 h-4 w-4" /> Email Me
                   </Link>
                 </Button>
               </motion.div>
@@ -105,10 +136,10 @@ export default function Home() {
                 transition={{ delay: 0.8, duration: 0.5 }}
                 className="flex justify-center space-x-6"
               >
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors transform hover:scale-110">
+                <Link href="https://github.com/JennyLee02" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors transform hover:scale-110">
                   <Github className="h-8 w-8" />
                 </Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors transform hover:scale-110">
+                <Link href="https://www.linkedin.com/in/jenny-lee02/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors transform hover:scale-110">
                   <Linkedin className="h-8 w-8" />
                 </Link>
               </motion.div>
@@ -130,38 +161,22 @@ export default function Home() {
           <div className="container mx-auto px-8 max-w-7xl">
             <h2 className="text-3xl font-bold mb-10 text-center">My Tech Stack</h2>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-8 max-w-4xl mx-auto">
-              {[
-                "React",
-                "Next.js",
-                "TypeScript",
-                "Node.js",
-                "Python",
-                "C++",
-                "MongoDB",
-                "SQL",
-                "AWS",
-                "Docker",
-                "Git",
-                "Tailwind CSS",
-              ].map((tech, index) => (
+              {techStack.map((tech, index) => (
                 <motion.div
-                  key={tech}
+                  key={tech.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.5 }}
                   className="flex flex-col items-center"
                 >
-                  <div className="w-16 h-16 mb-3 bg-background rounded-full flex items-center justify-center shadow-sm">
-                    <Image
-                      src={`/placeholder.svg?height=40&width=40`}
-                      alt={tech}
-                      width={40}
-                      height={40}
-                      className="object-contain"
+                  <div className="w-16 h-16 mb-3 bg-background rounded-full flex items-center justify-center shadow-sm border">
+                    <tech.icon 
+                      className="w-8 h-8" 
+                      style={{ color: tech.color }}
                     />
                   </div>
-                  <p className="text-sm font-medium">{tech}</p>
+                  <p className="text-sm font-medium">{tech.name}</p>
                 </motion.div>
               ))}
             </div>
@@ -190,13 +205,10 @@ export default function Home() {
               >
                 <h2 className="text-3xl font-bold mb-6">About Me</h2>
                 <p className="text-muted-foreground mb-6">
-                  I'm a passionate full stack developer with expertise in building modern web applications. With a
-                  strong foundation in both frontend and backend technologies, I create efficient, scalable, and
-                  user-friendly solutions to complex problems.
+                  I'm a passionate Computer Engineering student at the University of Waterloo with a strong foundation in software development and problem-solving. I love creating innovative solutions and tackling complex technical challenges across various domains.
                 </p>
                 <p className="text-muted-foreground mb-8">
-                  When I'm not coding, I enjoy contributing to open-source projects, writing technical articles, and
-                  continuously learning new technologies to stay at the forefront of web development.
+                  When I'm not coding, I enjoy playing basketball, brainstorming startup ideas, and traveling around the world. I'm always curious about exploring new places, cultures, and finding inspiration for my next big project.
                 </p>
 
                 <div className="flex flex-wrap gap-2">
@@ -251,7 +263,7 @@ export default function Home() {
                 className="bg-transparent hover:bg-primary-foreground/10 transform transition-all duration-300" 
                 asChild
               >
-                <Link href="#contact">Get In Touch</Link>
+                <Link href="mailto:j234lee@uwaterloo.ca">Email Me</Link>
               </Button>
             </div>
           </div>
@@ -269,25 +281,25 @@ function ExperienceTimeline() {
       id: 1,
       role: "Software Engineering Intern",
       company: "Altis Labs",
-      period: "May 2025 - Present",
-      description: "Led development of key features for the company's flagship product. Mentored junior developers and implemented best practices for code quality.",
-      skills: ["React", "TypeScript", "Node.js", "AWS"]
+      period: "May 2024 - Aug 2024",
+      description: "Worked on refactoring code for efficient performance and contributed to medical imaging web application backend development using Python.",
+      skills: ["Python", "Backend Development", "Code Refactoring", "Medical Imaging"]
     },
     {
       id: 2,
       role: "Associate Software Engineer",
       company: "Sun Life",
       period: "Sept 2024 - Dec 2024",
-      description: "Developed and maintained web applications using React and Node.js. Collaborated with design and product teams to deliver high-quality features.",
-      skills: ["React", "JavaScript", "AWS", "Docker"]
+      description: "Gained hands-on experience training SpaCy NER model for text extraction in CSR project. Won CI Challenge with 'Day 1 Pull Request' solution for developer onboarding. Implemented Python Lambda functions for PACRAT project and resolved critical AWS SAM CLI firewall issues after 4-week roadblock.",
+      skills: ["Python", "SpaCy", "AWS Lambda", "AWS SAM CLI", "Flask"]
     },
     {
       id: 3,
       role: "Web Developer",
       company: "Best Athletes",
       period: "Feb 2023 - Apr 2023",
-      description: "Built responsive user interfaces using modern JavaScript frameworks. Worked closely with designers to implement pixel-perfect designs.",
-      skills: ["React", "Next.js", "Tailwind"]
+      description: "Developed platform connecting athletes to recruiters for higher education. Implemented PDF exporting feature with interactive Chart.js elements using HTML-2-Canvas. Designed advanced filters for athlete listings, improving search efficiency and user satisfaction.",
+      skills: ["Vue.js", "TypeScript", "Veutify", "Docker", "Chart.js"]
     },
   ]
 
