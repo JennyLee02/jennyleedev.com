@@ -444,35 +444,37 @@ export default function ProjectDetailPage() {
             )}
 
             {/* Links Section */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Links</h2>
-              <div className="flex gap-4">
-                {project.githubUrl && (
-                  <Link 
-                    href={project.githubUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="outline" className="flex items-center gap-2">
-                      <Github className="h-4 w-4" />
-                      View Source Code
-                    </Button>
-                  </Link>
-                )}
-                {project.liveUrl && (
-                  <Link 
-                    href={project.liveUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="flex items-center gap-2">
-                      <ExternalLink className="h-4 w-4" />
-                      Live Demo
-                    </Button>
-                  </Link>
-                )}
-            </div>
-            </div>
+            {(project.githubUrl || project.liveUrl) && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Links</h2>
+                <div className="flex gap-4">
+                  {project.githubUrl && (
+                    <Link 
+                      href={project.githubUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <Github className="h-4 w-4" />
+                        View Source Code
+                      </Button>
+                    </Link>
+                  )}
+                  {project.liveUrl && (
+                    <Link 
+                      href={project.liveUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <Button className="flex items-center gap-2">
+                        <ExternalLink className="h-4 w-4" />
+                        Live Demo
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
