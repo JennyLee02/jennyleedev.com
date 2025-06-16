@@ -74,6 +74,67 @@
   }
 }
 
+/* Markdown header styling */
+.prose h1 {
+  @apply text-4xl font-bold mb-6 mt-8;
+}
+
+.prose h2 {
+  @apply text-3xl font-bold mb-4 mt-6;
+}
+
+.prose h3 {
+  @apply text-2xl font-semibold mb-3 mt-5;
+}
+
+.prose h4 {
+  @apply text-xl font-semibold mb-2 mt-4;
+}
+
+.prose h5 {
+  @apply text-lg font-medium mb-2 mt-3;
+}
+
+.prose h6 {
+  @apply text-base font-medium mb-2 mt-3;
+}
+
+/* Markdown paragraph and list styling */
+.prose p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose ul, .prose ol {
+  @apply mb-4 ml-6;
+}
+
+.prose li {
+  @apply mb-2;
+}
+
+/* Markdown table styling */
+.prose table {
+  @apply w-full border-collapse border border-border mb-4;
+}
+
+.prose th, .prose td {
+  @apply border border-border px-4 py-2 text-left;
+}
+
+.prose th {
+  @apply bg-muted font-semibold;
+}
+
+/* Markdown blockquote styling */
+.prose blockquote {
+  @apply border-l-4 border-primary pl-4 italic mb-4;
+}
+
+/* Markdown horizontal rule styling */
+.prose hr {
+  @apply border-t border-border my-8;
+}
+
 /* Code block enhancements */
 .prose pre {
   @apply bg-slate-900;
