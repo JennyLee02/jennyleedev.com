@@ -48,7 +48,9 @@ model LeetcodeSolution {
   solution    String
   approach    String
   timeComplexity String
+  timeComplexityExplanation String?
   spaceComplexity String
+  spaceComplexityExplanation String?
   category    String
   tags        String[]
   leetcodeUrl String?  // Optional URL to the original LeetCode problem

@@ -26,9 +26,11 @@ export default function CreateLeetcodePage() {
     category: "",
     description: "",
     approach: "",
-    timeComplexity: "",
-    spaceComplexity: "",
     solution: "",
+    timeComplexity: "",
+    timeComplexityExplanation: "",
+    spaceComplexity: "",
+    spaceComplexityExplanation: "",
     leetcodeUrl: "",
   });
 
@@ -122,7 +124,9 @@ export default function CreateLeetcodePage() {
           description: formData.description,
           approach: formData.approach,
           timeComplexity: formData.timeComplexity,
+          timeComplexityExplanation: formData.timeComplexityExplanation,
           spaceComplexity: formData.spaceComplexity,
+          spaceComplexityExplanation: formData.spaceComplexityExplanation,
           solution: formData.solution,
           tags,
           leetcodeUrl: formData.leetcodeUrl,
@@ -336,6 +340,18 @@ export default function CreateLeetcodePage() {
             </div>
 
             <div>
+              <Label htmlFor="timeComplexityExplanation">Time Complexity Explanation</Label>
+              <Textarea
+                id="timeComplexityExplanation"
+                name="timeComplexityExplanation"
+                value={formData.timeComplexityExplanation}
+                onChange={handleInputChange}
+                placeholder="Explain why the time complexity is what it is..."
+                rows={4}
+              />
+            </div>
+
+            <div>
               <Label htmlFor="spaceComplexity">Space Complexity</Label>
               <Input
                 id="spaceComplexity"
@@ -344,6 +360,18 @@ export default function CreateLeetcodePage() {
                 onChange={handleInputChange}
                 placeholder="e.g., O(n)"
                 required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="spaceComplexityExplanation">Space Complexity Explanation</Label>
+              <Textarea
+                id="spaceComplexityExplanation"
+                name="spaceComplexityExplanation"
+                value={formData.spaceComplexityExplanation}
+                onChange={handleInputChange}
+                placeholder="Explain why the space complexity is what it is..."
+                rows={4}
               />
             </div>
           </CardContent>

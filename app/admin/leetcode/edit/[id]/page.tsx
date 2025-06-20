@@ -22,7 +22,9 @@ interface LeetcodeSolution {
   approach: string;
   solution: string;
   timeComplexity: string;
+  timeComplexityExplanation?: string;
   spaceComplexity: string;
+  spaceComplexityExplanation?: string;
   tags: string[];
   leetcodeUrl?: string;
 }
@@ -45,7 +47,9 @@ export default function EditLeetcodePage() {
     approach: "",
     solution: "",
     timeComplexity: "",
+    timeComplexityExplanation: "",
     spaceComplexity: "",
+    spaceComplexityExplanation: "",
     leetcodeUrl: "",
   });
 
@@ -65,7 +69,9 @@ export default function EditLeetcodePage() {
             approach: data.approach,
             solution: data.solution,
             timeComplexity: data.timeComplexity,
+            timeComplexityExplanation: data.timeComplexityExplanation || "",
             spaceComplexity: data.spaceComplexity,
+            spaceComplexityExplanation: data.spaceComplexityExplanation || "",
             leetcodeUrl: data.leetcodeUrl || "",
           });
           setTags(data.tags || []);
@@ -124,6 +130,10 @@ export default function EditLeetcodePage() {
           title: data.title || prev.title,
           number: data.number ? data.number.toString() : prev.number,
           difficulty: data.difficulty || prev.difficulty,
+          timeComplexity: data.timeComplexity || prev.timeComplexity,
+          timeComplexityExplanation: data.timeComplexityExplanation || prev.timeComplexityExplanation,
+          spaceComplexity: data.spaceComplexity || prev.spaceComplexity,
+          spaceComplexityExplanation: data.spaceComplexityExplanation || prev.spaceComplexityExplanation,
         }))
 
         if (data.warning) {
@@ -175,7 +185,9 @@ export default function EditLeetcodePage() {
           description: formData.description,
           approach: formData.approach,
           timeComplexity: formData.timeComplexity,
+          timeComplexityExplanation: formData.timeComplexityExplanation,
           spaceComplexity: formData.spaceComplexity,
+          spaceComplexityExplanation: formData.spaceComplexityExplanation,
           solution: formData.solution,
           leetcodeUrl: formData.leetcodeUrl,
           tags,
@@ -392,6 +404,18 @@ export default function EditLeetcodePage() {
             </div>
 
             <div>
+              <Label htmlFor="timeComplexityExplanation">Time Complexity Explanation</Label>
+              <Textarea
+                id="timeComplexityExplanation"
+                name="timeComplexityExplanation"
+                value={formData.timeComplexityExplanation}
+                onChange={handleInputChange}
+                placeholder="Explain the time complexity"
+                rows={4}
+              />
+            </div>
+
+            <div>
               <Label htmlFor="spaceComplexity">Space Complexity</Label>
               <Input
                 id="spaceComplexity"
@@ -400,6 +424,18 @@ export default function EditLeetcodePage() {
                 onChange={handleInputChange}
                 placeholder="e.g., O(n)"
                 required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="spaceComplexityExplanation">Space Complexity Explanation</Label>
+              <Textarea
+                id="spaceComplexityExplanation"
+                name="spaceComplexityExplanation"
+                value={formData.spaceComplexityExplanation}
+                onChange={handleInputChange}
+                placeholder="Explain the space complexity"
+                rows={4}
               />
             </div>
           </CardContent>

@@ -23,7 +23,9 @@ interface LeetcodeSolution {
   approach: string;
   solution: string;
   timeComplexity: string;
+  timeComplexityExplanation?: string;
   spaceComplexity: string;
+  spaceComplexityExplanation?: string;
   tags: string[];
   createdAt: string;
   updatedAt: string;
@@ -147,15 +149,17 @@ export default function LeetCodeSolutionPage() {
                     day: 'numeric' 
                   })}
                 </div>
-                <a 
-                  href={`https://leetcode.com/problems/problem-${solution.number}/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  View on LeetCode
-                </a>
+                {solution.leetcodeUrl && (
+                  <a 
+                    href={solution.leetcodeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    View on LeetCode
+                  </a>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -166,28 +170,6 @@ export default function LeetCodeSolutionPage() {
                 ))}
               </div>
             </div>
-
-            {/* LeetCode Link */}
-            {solution.leetcodeUrl && (
-              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-6 rounded-xl border border-orange-100">
-                <div className="flex items-center gap-3">
-                  <div className="bg-orange-100 p-2 rounded-lg">
-                    <ExternalLink className="h-5 w-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Original Problem</h3>
-                    <a 
-                      href={solution.leetcodeUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-orange-600 hover:text-orange-700 underline text-sm"
-                    >
-                      View on LeetCode →
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -374,38 +356,44 @@ export default function LeetCodeSolutionPage() {
                       <div className="bg-muted/20 p-4 rounded-lg">
                         <h4 className="font-semibold mb-2">Why {solution.timeComplexity}?</h4>
                         <div className="text-sm text-muted-foreground space-y-2">
-                          {solution.timeComplexity === "O(n)" && (
+                          {solution.timeComplexityExplanation ? (
+                            <div className="whitespace-pre-wrap">{solution.timeComplexityExplanation}</div>
+                          ) : (
                             <>
-                              <p>• We iterate through the array once using a hash table</p>
-                              <p>• Each hash table lookup and insertion is O(1)</p>
-                              <p>• Total: n iterations × O(1) = O(n)</p>
+                              {solution.timeComplexity === "O(n)" && (
+                                <>
+                                  <p>• We iterate through the array once using a hash table</p>
+                                  <p>• Each hash table lookup and insertion is O(1)</p>
+                                  <p>• Total: n iterations × O(1) = O(n)</p>
+                                </>
+                              )}
+                              {solution.timeComplexity === "O(n²)" && (
+                                <>
+                                  <p>• Nested loops iterate through the array</p>
+                                  <p>• Outer loop: n iterations</p>
+                                  <p>• Inner loop: n-1, n-2, ... iterations</p>
+                                  <p>• Total: n × (n-1)/2 ≈ O(n²)</p>
+                                </>
+                              )}
+                              {solution.timeComplexity === "O(log n)" && (
+                                <>
+                                  <p>• Binary search divides the search space by half each time</p>
+                                  <p>• Maximum comparisons: log₂(n)</p>
+                                  <p>• Each comparison is O(1)</p>
+                                </>
+                              )}
+                              {solution.timeComplexity === "O(n log n)" && (
+                                <>
+                                  <p>• Sorting algorithms like mergesort/heapsort</p>
+                                  <p>• Divide and conquer: log n levels</p>
+                                  <p>• Each level processes n elements</p>
+                                  <p>• Total: n × log n = O(n log n)</p>
+                                </>
+                              )}
+                              {!["O(n)", "O(n²)", "O(log n)", "O(n log n)"].includes(solution.timeComplexity) && (
+                                <p>This complexity depends on the specific algorithm used in this solution. Check the approach section for detailed analysis.</p>
+                              )}
                             </>
-                          )}
-                          {solution.timeComplexity === "O(n²)" && (
-                            <>
-                              <p>• Nested loops iterate through the array</p>
-                              <p>• Outer loop: n iterations</p>
-                              <p>• Inner loop: n-1, n-2, ... iterations</p>
-                              <p>• Total: n × (n-1)/2 ≈ O(n²)</p>
-                            </>
-                          )}
-                          {solution.timeComplexity === "O(log n)" && (
-                            <>
-                              <p>• Binary search divides the search space by half each time</p>
-                              <p>• Maximum comparisons: log₂(n)</p>
-                              <p>• Each comparison is O(1)</p>
-                            </>
-                          )}
-                          {solution.timeComplexity === "O(n log n)" && (
-                            <>
-                              <p>• Sorting algorithms like mergesort/heapsort</p>
-                              <p>• Divide and conquer: log n levels</p>
-                              <p>• Each level processes n elements</p>
-                              <p>• Total: n × log n = O(n log n)</p>
-                            </>
-                          )}
-                          {!["O(n)", "O(n²)", "O(log n)", "O(n log n)"].includes(solution.timeComplexity) && (
-                            <p>This complexity depends on the specific algorithm used in this solution. Check the approach section for detailed analysis.</p>
                           )}
                         </div>
                       </div>
@@ -445,38 +433,44 @@ export default function LeetCodeSolutionPage() {
                       <div className="bg-muted/20 p-4 rounded-lg">
                         <h4 className="font-semibold mb-2">Why {solution.spaceComplexity}?</h4>
                         <div className="text-sm text-muted-foreground space-y-2">
-                          {solution.spaceComplexity === "O(n)" && (
+                          {solution.spaceComplexityExplanation ? (
+                            <div className="whitespace-pre-wrap">{solution.spaceComplexityExplanation}</div>
+                          ) : (
                             <>
-                              <p>• Hash table stores up to n key-value pairs</p>
-                              <p>• In worst case, we store all n elements</p>
-                              <p>• Additional variables use O(1) space</p>
-                              <p>• Total: O(n) + O(1) = O(n)</p>
+                              {solution.spaceComplexity === "O(n)" && (
+                                <>
+                                  <p>• Hash table stores up to n key-value pairs</p>
+                                  <p>• In worst case, we store all n elements</p>
+                                  <p>• Additional variables use O(1) space</p>
+                                  <p>• Total: O(n) + O(1) = O(n)</p>
+                                </>
+                              )}
+                              {solution.spaceComplexity === "O(1)" && (
+                                <>
+                                  <p>• Only using a constant amount of extra variables</p>
+                                  <p>• No additional data structures that grow with input</p>
+                                  <p>• Space usage remains constant regardless of input size</p>
+                                </>
+                              )}
+                              {solution.spaceComplexity === "O(log n)" && (
+                                <>
+                                  <p>• Recursive algorithm with log n depth</p>
+                                  <p>• Each recursive call uses O(1) space</p>
+                                  <p>• Call stack height: log n</p>
+                                  <p>• Total: log n × O(1) = O(log n)</p>
+                                </>
+                              )}
+                              {solution.spaceComplexity === "O(n log n)" && (
+                                <>
+                                  <p>• Sorting algorithm that uses additional space</p>
+                                  <p>• Merge sort uses O(n) auxiliary space</p>
+                                  <p>• With recursion depth of log n</p>
+                                </>
+                              )}
+                              {!["O(n)", "O(1)", "O(log n)", "O(n log n)"].includes(solution.spaceComplexity) && (
+                                <p>This space complexity depends on the specific data structures used in this solution. Check the approach section for detailed analysis.</p>
+                              )}
                             </>
-                          )}
-                          {solution.spaceComplexity === "O(1)" && (
-                            <>
-                              <p>• Only using a constant amount of extra variables</p>
-                              <p>• No additional data structures that grow with input</p>
-                              <p>• Space usage remains constant regardless of input size</p>
-                            </>
-                          )}
-                          {solution.spaceComplexity === "O(log n)" && (
-                            <>
-                              <p>• Recursive algorithm with log n depth</p>
-                              <p>• Each recursive call uses O(1) space</p>
-                              <p>• Call stack height: log n</p>
-                              <p>• Total: log n × O(1) = O(log n)</p>
-                            </>
-                          )}
-                          {solution.spaceComplexity === "O(n log n)" && (
-                            <>
-                              <p>• Sorting algorithm that uses additional space</p>
-                              <p>• Merge sort uses O(n) auxiliary space</p>
-                              <p>• With recursion depth of log n</p>
-                            </>
-                          )}
-                          {!["O(n)", "O(1)", "O(log n)", "O(n log n)"].includes(solution.spaceComplexity) && (
-                            <p>This space complexity depends on the specific data structures used in this solution. Check the approach section for detailed analysis.</p>
                           )}
                         </div>
                       </div>

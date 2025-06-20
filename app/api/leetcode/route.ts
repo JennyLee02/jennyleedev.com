@@ -27,7 +27,9 @@ export async function POST(request: NextRequest) {
       approach,
       solution,
       timeComplexity,
+      timeComplexityExplanation,
       spaceComplexity,
+      spaceComplexityExplanation,
       tags,
       leetcodeUrl
     } = await request.json();
@@ -42,7 +44,9 @@ export async function POST(request: NextRequest) {
         approach,
         solution,
         timeComplexity,
+        timeComplexityExplanation: timeComplexityExplanation || null,
         spaceComplexity,
+        spaceComplexityExplanation: spaceComplexityExplanation || null,
         tags,
         leetcodeUrl: leetcodeUrl || null
       },

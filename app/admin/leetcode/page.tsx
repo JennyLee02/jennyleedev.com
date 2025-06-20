@@ -16,7 +16,9 @@ interface LeetcodeSolution {
   approach: string;
   solution: string;
   timeComplexity: string;
+  timeComplexityExplanation?: string;
   spaceComplexity: string;
+  spaceComplexityExplanation?: string;
   tags: string[];
   createdAt: string;
   updatedAt: string;
