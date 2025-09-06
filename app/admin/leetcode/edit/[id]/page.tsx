@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { X, ArrowLeft, Save, Download } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save, ArrowLeft, Hash, Clock, Target, Cpu, Calendar, ExternalLink, Lightbulb, Download, X, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface LeetcodeSolution {
@@ -19,6 +20,9 @@ interface LeetcodeSolution {
   difficulty: "Easy" | "Medium" | "Hard";
   category: string;
   description: string;
+  examples?: {input: string; output: string; explanation?: string}[];
+  constraints?: string;
+  followUp?: string;
   approach: string;
   solution: string;
   timeComplexity: string;
@@ -27,6 +31,10 @@ interface LeetcodeSolution {
   spaceComplexityExplanation?: string;
   tags: string[];
   leetcodeUrl?: string;
+  pythonCode?: string;
+  cppCode?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function EditLeetcodePage() {
@@ -37,6 +45,7 @@ export default function EditLeetcodePage() {
   const [saving, setSaving] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
+  const [examples, setExamples] = useState<{input: string, output: string, explanation?: string}[]>([{input: "", output: "", explanation: ""}]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -44,6 +53,8 @@ export default function EditLeetcodePage() {
     difficulty: "" as "Easy" | "Medium" | "Hard" | "",
     category: "",
     description: "",
+    constraints: "",
+    followUp: "",
     approach: "",
     solution: "",
     timeComplexity: "",
@@ -51,6 +62,8 @@ export default function EditLeetcodePage() {
     spaceComplexity: "",
     spaceComplexityExplanation: "",
     leetcodeUrl: "",
+    pythonCode: "",
+    cppCode: "",
   });
 
   useEffect(() => {
@@ -66,6 +79,8 @@ export default function EditLeetcodePage() {
             difficulty: data.difficulty,
             category: data.category || "",
             description: data.description,
+            constraints: data.constraints || "",
+            followUp: data.followUp || "",
             approach: data.approach,
             solution: data.solution,
             timeComplexity: data.timeComplexity,
@@ -73,8 +88,16 @@ export default function EditLeetcodePage() {
             spaceComplexity: data.spaceComplexity,
             spaceComplexityExplanation: data.spaceComplexityExplanation || "",
             leetcodeUrl: data.leetcodeUrl || "",
+            pythonCode: data.pythonCode || "",
+            cppCode: data.cppCode || "",
           });
           setTags(data.tags || []);
+          // Load examples with fallback to empty example
+          if (data.examples && Array.isArray(data.examples)) {
+            setExamples(data.examples.length > 0 ? data.examples : [{input: "", output: "", explanation: ""}]);
+          } else {
+            setExamples([{input: "", output: "", explanation: ""}]);
+          }
         } else {
           alert("Failed to fetch solution");
         }
@@ -105,6 +128,22 @@ export default function EditLeetcodePage() {
     setTags(tags.filter(tag => tag !== tagToRemove))
   }
 
+  const addExample = () => {
+    setExamples([...examples, {input: "", output: "", explanation: ""}]);
+  };
+
+  const removeExample = (index: number) => {
+    if (examples.length > 1) {
+      setExamples(examples.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateExample = (index: number, field: 'input' | 'output' | 'explanation', value: string) => {
+    const updatedExamples = [...examples];
+    updatedExamples[index] = {...updatedExamples[index], [field]: value};
+    setExamples(updatedExamples);
+  };
+
   const fetchFromLeetCode = async () => {
     if (!formData.leetcodeUrl) {
       alert('Please enter a LeetCode URL first')
@@ -134,6 +173,8 @@ export default function EditLeetcodePage() {
           timeComplexityExplanation: data.timeComplexityExplanation || prev.timeComplexityExplanation,
           spaceComplexity: data.spaceComplexity || prev.spaceComplexity,
           spaceComplexityExplanation: data.spaceComplexityExplanation || prev.spaceComplexityExplanation,
+          pythonCode: data.pythonCode || prev.pythonCode,
+          cppCode: data.cppCode || prev.cppCode,
         }))
 
         if (data.warning) {
@@ -152,11 +193,9 @@ export default function EditLeetcodePage() {
     }
   }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleDifficultyChange = (value: "Easy" | "Medium" | "Hard") => {
@@ -183,6 +222,9 @@ export default function EditLeetcodePage() {
           difficulty: formData.difficulty,
           category: formData.category,
           description: formData.description,
+          examples: examples.filter(ex => ex.input.trim() || ex.output.trim()), // Only include non-empty examples
+          constraints: formData.constraints || undefined,
+          followUp: formData.followUp || undefined,
           approach: formData.approach,
           timeComplexity: formData.timeComplexity,
           timeComplexityExplanation: formData.timeComplexityExplanation,
@@ -190,6 +232,8 @@ export default function EditLeetcodePage() {
           spaceComplexityExplanation: formData.spaceComplexityExplanation,
           solution: formData.solution,
           leetcodeUrl: formData.leetcodeUrl,
+          pythonCode: formData.pythonCode,
+          cppCode: formData.cppCode,
           tags,
         }),
       });
@@ -236,29 +280,28 @@ export default function EditLeetcodePage() {
           <CardContent className="space-y-4">
             {/* LeetCode URL */}
             <div>
-              <Label htmlFor="leetcodeUrl">LeetCode Problem URL</Label>
-              <div className="flex gap-2 mt-2">
-                <Input
-                  id="leetcodeUrl"
-                  name="leetcodeUrl"
+              <label className="block text-sm font-medium mb-2">
+                LeetCode URL (Optional)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
                   value={formData.leetcodeUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://leetcode.com/problems/two-sum/"
-                  className="flex-1"
+                  onChange={(e) => setFormData({...formData, leetcodeUrl: e.target.value})}
+                  className="flex-1 p-2 border rounded-md"
+                  placeholder="https://leetcode.com/problems/..."
                 />
-                <Button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={fetchFromLeetCode}
                   disabled={fetchingData || !formData.leetcodeUrl}
-                  variant="outline"
-                  className="flex items-center gap-2"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300 min-w-[80px]"
                 >
-                  <Download className="h-4 w-4" />
-                  {fetchingData ? 'Fetching...' : 'Auto-Fill'}
-                </Button>
+                  {fetchingData ? '...' : 'Fetch'}
+                </button>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Optional: Update LeetCode URL to auto-fill basic information
+              <p className="text-sm text-gray-600 mt-1">
+                Leave empty to manually enter all details, or paste LeetCode URL to auto-fetch
               </p>
             </div>
 
@@ -339,6 +382,97 @@ export default function EditLeetcodePage() {
                 placeholder="Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target..."
                 rows={4}
                 required
+              />
+            </div>
+
+            {/* Examples Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Examples</Label>
+                <Button type="button" onClick={addExample} size="sm" variant="outline">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Example
+                </Button>
+              </div>
+              
+              {examples.map((example, index) => (
+                <Card key={index} className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-sm font-medium">Example {index + 1}</Label>
+                    {examples.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={() => removeExample(index)}
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor={`input-${index}`} className="text-sm">Input</Label>
+                      <Textarea
+                        id={`input-${index}`}
+                        value={example.input}
+                        onChange={(e) => updateExample(index, 'input', e.target.value)}
+                        placeholder="nums = [2,7,11,15], target = 9"
+                        rows={2}
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`output-${index}`} className="text-sm">Output</Label>
+                      <Textarea
+                        id={`output-${index}`}
+                        value={example.output}
+                        onChange={(e) => updateExample(index, 'output', e.target.value)}
+                        placeholder="[0,1]"
+                        rows={2}
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`explanation-${index}`} className="text-sm">Explanation (Optional)</Label>
+                      <Textarea
+                        id={`explanation-${index}`}
+                        value={example.explanation || ''}
+                        onChange={(e) => updateExample(index, 'explanation', e.target.value)}
+                        placeholder="Because nums[0] + nums[1] == 9, we return [0, 1]."
+                        rows={2}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <div>
+              <Label htmlFor="constraints">Constraints (Optional)</Label>
+              <Textarea
+                id="constraints"
+                name="constraints"
+                value={formData.constraints}
+                onChange={handleInputChange}
+                placeholder="• 2 ≤ nums.length ≤ 10⁴&#10;• -10⁹ ≤ nums[i] ≤ 10⁹&#10;• -10⁹ ≤ target ≤ 10⁹&#10;• Only one valid answer exists."
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="followUp">Follow-up Questions (Optional)</Label>
+              <Textarea
+                id="followUp"
+                name="followUp"
+                value={formData.followUp}
+                onChange={handleInputChange}
+                placeholder="Can you come up with an algorithm that is less than O(n²) time complexity?"
+                rows={2}
               />
             </div>
 
@@ -447,20 +581,47 @@ export default function EditLeetcodePage() {
             <CardTitle>💻 Solution Code</CardTitle>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="solution">Python Solution</Label>
-            <Textarea
-              id="solution"
-              name="solution"
-              value={formData.solution}
-              onChange={handleInputChange}
-              placeholder="class Solution:
+            <Tabs defaultValue="python">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="python">Python</TabsTrigger>
+                <TabsTrigger value="cpp">C++</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="python" className="mt-4">
+                <Label htmlFor="pythonCode">Python Solution</Label>
+                <Textarea
+                  id="pythonCode"
+                  name="pythonCode"
+                  value={formData.pythonCode || ''}
+                  onChange={handleInputChange}
+                  placeholder="class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
-        # Your solution here
+        # Your Python solution here
         pass"
-              rows={12}
-              className="mt-2 font-mono"
-              required
-            />
+                  rows={15}
+                  className="mt-2 font-mono text-sm"
+                />
+              </TabsContent>
+              
+              <TabsContent value="cpp" className="mt-4">
+                <Label htmlFor="cppCode">C++ Solution</Label>
+                <Textarea
+                  id="cppCode"
+                  name="cppCode"
+                  value={formData.cppCode || ''}
+                  onChange={handleInputChange}
+                  placeholder="class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        // Your C++ solution here
+        return {};
+    }
+};"
+                  rows={15}
+                  className="mt-2 font-mono text-sm"
+                />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 

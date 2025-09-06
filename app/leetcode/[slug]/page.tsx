@@ -17,19 +17,24 @@ interface LeetcodeSolution {
   id: string;
   title: string;
   number: number;
-  difficulty: "Easy" | "Medium" | "Hard";
+  difficulty: string;
   category: string;
   description: string;
+  examples?: {input: string; output: string; explanation?: string}[];
+  constraints?: string;
+  followUp?: string;
+  solution?: string;
+  pythonCode?: string;
+  cppCode?: string;
   approach: string;
-  solution: string;
   timeComplexity: string;
   timeComplexityExplanation?: string;
   spaceComplexity: string;
   spaceComplexityExplanation?: string;
   tags: string[];
+  leetcodeUrl?: string;
   createdAt: string;
   updatedAt: string;
-  leetcodeUrl?: string;
 }
 
 export default function LeetCodeSolutionPage() {
@@ -188,117 +193,86 @@ export default function LeetCodeSolutionPage() {
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">
-                {(() => {
-                  const sections = solution.description.split('\n\n');
-                  const mainDescription = sections[0];
-                  const examples = sections.filter(section => section.toLowerCase().includes('example'));
-                  const constraints = sections.find(section => section.toLowerCase().includes('constraint'));
-                  const followUp = sections.find(section => section.toLowerCase().includes('follow'));
+                {/* Main Description */}
+                <div className="bg-muted/20 p-6 rounded-lg border">
+                  <p className="text-lg leading-relaxed whitespace-pre-wrap">
+                    {solution.description}
+                  </p>
+                </div>
 
-                  return (
-                    <>
-                      {/* Main Description */}
-                      <div className="bg-muted/20 p-6 rounded-lg border">
-                        <p className="text-lg leading-relaxed">
-                          {mainDescription}
-                        </p>
-                      </div>
-
-                      {/* Examples Section */}
-                      {examples.length > 0 && (
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-semibold">
-                            Examples
-                          </h3>
-                          
-                          {examples.map((example, index) => {
-                            // Parse example content
-                            const lines = example.split('\n').filter(line => line.trim());
-                            const exampleNum = index + 1;
-                            
-                            return (
-                              <div key={index} className="space-y-3">
-                                <h4 className="font-medium text-foreground">
-                                  Example {exampleNum}:
-                                </h4>
-                                <div className="bg-muted/50 border rounded-lg p-4 space-y-2">
-                                  {lines.map((line, lineIndex) => {
-                                    if (line.toLowerCase().includes('input:')) {
-                                      const input = line.split('Input:')[1]?.trim() || line.split('input:')[1]?.trim();
-                                      return (
-                                        <div key={lineIndex}>
-                                          <div className="text-sm text-muted-foreground mb-1">Input:</div>
-                                          <code className="block bg-background border rounded px-3 py-2 text-sm font-mono">
-                                            {input}
-                                          </code>
-                                        </div>
-                                      );
-                                    } else if (line.toLowerCase().includes('output:')) {
-                                      const output = line.split('Output:')[1]?.trim() || line.split('output:')[1]?.trim();
-                                      return (
-                                        <div key={lineIndex}>
-                                          <div className="text-sm text-muted-foreground mb-1">Output:</div>
-                                          <code className="block bg-background border rounded px-3 py-2 text-sm font-mono">
-                                            {output}
-                                          </code>
-                                        </div>
-                                      );
-                                    }
-                                    return null;
-                                  }).filter(Boolean)}
-                                </div>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    )}
-
-                      {/* Constraints */}
-                      {constraints && (
-                        <div className="space-y-3">
-                          <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <span className="w-2 h-2 bg-foreground rounded-full"></span>
-                            Constraints
-                          </h3>
-                          <div className="bg-muted/10 border rounded-lg p-4">
-                            <div className="space-y-2 text-sm">
-                              {constraints.split('\n').filter(line => line.trim() && !line.toLowerCase().includes('constraint')).map((constraint, index) => (
-                                <div key={index} className="flex items-center gap-3">
-                                  <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full flex-shrink-0"></span>
-                                  <span className="text-muted-foreground">
-                                    {constraint.trim().replace(/^[•\-\*]\s*/, '')}
-                                  </span>
-                  </div>
-                ))}
-              </div>
+                {/* Examples Section */}
+                {solution.examples && solution.examples.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">
+                      Examples
+                    </h3>
+                    
+                    {solution.examples.map((example, index) => (
+                      <div key={index} className="space-y-3">
+                        <h4 className="font-medium text-foreground">
+                          Example {index + 1}:
+                        </h4>
+                        <div className="bg-muted/50 border rounded-lg p-4 space-y-3">
+                          <div>
+                            <div className="text-sm text-muted-foreground mb-1">Input:</div>
+                            <code className="block bg-background border rounded px-3 py-2 text-sm font-mono">
+                              {example.input}
+                            </code>
                           </div>
+                          <div>
+                            <div className="text-sm text-muted-foreground mb-1">Output:</div>
+                            <code className="block bg-background border rounded px-3 py-2 text-sm font-mono">
+                              {example.output}
+                            </code>
+                          </div>
+                          {example.explanation && (
+                            <div>
+                              <div className="text-sm text-muted-foreground mb-1">Explanation:</div>
+                              <p className="text-sm text-muted-foreground">
+                                {example.explanation}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-                      {/* Follow-up */}
-                      {followUp && (
-                        <div className="bg-muted/20 border rounded-lg p-5">
-                          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
-                            <span className="p-1 bg-muted rounded">💡</span>
-                            Follow-up
-                          </h3>
-                          <p className="text-sm leading-relaxed text-muted-foreground">
-                            {followUp.replace(/follow.{0,5}up:?\s*/i, '').trim()}
-                          </p>
-            </div>
-                      )}
+                {/* Constraints */}
+                {solution.constraints && (
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <span className="w-2 h-2 bg-foreground rounded-full"></span>
+                      Constraints
+                    </h3>
+                    <div className="bg-muted/10 border rounded-lg p-4">
+                      <div className="space-y-2 text-sm">
+                        {solution.constraints.split('\n').filter(line => line.trim()).map((constraint, index) => (
+                          <div key={index} className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full flex-shrink-0 mt-2"></span>
+                            <span className="text-muted-foreground">
+                              {constraint.trim().replace(/^[•\-\*]\s*/, '')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                      {/* If no structured sections found, show original description */}
-                      {examples.length === 0 && !constraints && !followUp && sections.length > 1 && (
-                        <div className="bg-muted/20 p-6 rounded-lg border">
-                          <pre className="whitespace-pre-wrap font-sans leading-relaxed">
-                            {sections.slice(1).join('\n\n')}
-                          </pre>
-                        </div>
-                      )}
-                    </>
-                  );
-                })()}
+                {/* Follow-up */}
+                {solution.followUp && (
+                  <div className="bg-muted/20 border rounded-lg p-5">
+                    <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+                      <span className="p-1 bg-muted rounded">💡</span>
+                      Follow-up
+                    </h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                      {solution.followUp}
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -482,89 +456,74 @@ export default function LeetCodeSolutionPage() {
           </Card>
 
           {/* Solution Code */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <span>💻</span>
-                Solution Code
+          <Card className="mb-8 overflow-hidden">
+            <CardHeader className="bg-muted/30 border-b">
+              <CardTitle className="text-xl flex items-center gap-3">
+                <div className="p-2 bg-muted rounded-lg">
+                  <Code className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <span>Solution Code</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              {/* Language Tabs */}
-              <div className="flex space-x-1 mb-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-                <button
-                  onClick={() => setActiveTab('python')}
-                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                    activeTab === 'python'
-                      ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Python
-                </button>
-                <button
-                  onClick={() => setActiveTab('cpp')}
-                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                    activeTab === 'cpp'
-                      ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                  }`}
-                >
-                  C++
-                </button>
+            <CardContent className="p-0">
+              <div className="border-b bg-muted/10">
+                <div className="flex">
+                  {(solution.pythonCode || solution.solution) && (
+                    <button
+                      onClick={() => setActiveTab('python')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === 'python'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Python
+                    </button>
+                  )}
+                  {solution.cppCode && (
+                    <button
+                      onClick={() => setActiveTab('cpp')}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === 'cpp'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      C++
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {/* Code Content */}
               <div className="relative">
                 <div className="absolute top-4 right-4 z-10">
                   <span className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
                     {activeTab === 'python' ? 'Python' : 'C++'}
                   </span>
-            </div>
+                </div>
 
-                {activeTab === 'python' ? (
-                  <pre className="bg-[#1e1e1e] text-gray-100 p-6 rounded-lg overflow-x-auto border border-gray-600">
-                    <code className="text-sm leading-relaxed">
-                      <span className="text-blue-400">class</span> <span className="text-yellow-300">Solution</span>:
-{'\n'}    <span className="text-blue-400">def</span> <span className="text-yellow-300">twoSum</span>(<span className="text-orange-400">self</span>, <span className="text-blue-300">nums</span>: List[<span className="text-green-400">int</span>], <span className="text-blue-300">target</span>: <span className="text-green-400">int</span>) -&gt; List[<span className="text-green-400">int</span>]:
-{'\n'}        <span className="text-gray-400"># Hash table to store number and its index</span>
-{'\n'}        <span className="text-blue-300">num_map</span> = {'{}'}
-{'\n'}        
-{'\n'}        <span className="text-blue-400">for</span> <span className="text-blue-300">i</span>, <span className="text-blue-300">num</span> <span className="text-blue-400">in</span> <span className="text-yellow-300">enumerate</span>(<span className="text-blue-300">nums</span>):
-{'\n'}            <span className="text-blue-300">complement</span> = <span className="text-blue-300">target</span> - <span className="text-blue-300">num</span>
-{'\n'}            
-{'\n'}            <span className="text-blue-400">if</span> <span className="text-blue-300">complement</span> <span className="text-blue-400">in</span> <span className="text-blue-300">num_map</span>:
-{'\n'}                <span className="text-blue-400">return</span> [<span className="text-blue-300">num_map</span>[<span className="text-blue-300">complement</span>], <span className="text-blue-300">i</span>]
-{'\n'}            
-{'\n'}            <span className="text-blue-300">num_map</span>[<span className="text-blue-300">num</span>] = <span className="text-blue-300">i</span>
-{'\n'}        
-{'\n'}        <span className="text-blue-400">return</span> []
+                {activeTab === 'python' && (solution.pythonCode || solution.solution) && (
+                  <pre className="bg-[#1e1e1e] text-gray-100 p-6 rounded-none overflow-x-auto">
+                    <code className="text-sm leading-relaxed whitespace-pre">
+                      {solution.pythonCode || solution.solution}
                     </code>
                   </pre>
-                ) : (
-                  <pre className="bg-[#1e1e1e] text-gray-100 p-6 rounded-lg overflow-x-auto border border-gray-600">
-                    <code className="text-sm leading-relaxed">
-                      <span className="text-blue-400">class</span> <span className="text-yellow-300">Solution</span> {'{'}
-{'\n'}<span className="text-blue-400">public</span>:
-{'\n'}    <span className="text-green-400">vector</span>&lt;<span className="text-green-400">int</span>&gt; <span className="text-yellow-300">twoSum</span>(<span className="text-green-400">vector</span>&lt;<span className="text-green-400">int</span>&gt;&amp; <span className="text-blue-300">nums</span>, <span className="text-green-400">int</span> <span className="text-blue-300">target</span>) {'{'}
-{'\n'}        <span className="text-gray-400">// Hash map to store number and its index</span>
-{'\n'}        <span className="text-green-400">unordered_map</span>&lt;<span className="text-green-400">int</span>, <span className="text-green-400">int</span>&gt; <span className="text-blue-300">numMap</span>;
-{'\n'}        
-{'\n'}        <span className="text-blue-400">for</span> (<span className="text-green-400">int</span> <span className="text-blue-300">i</span> = <span className="text-purple-400">0</span>; <span className="text-blue-300">i</span> &lt; <span className="text-blue-300">nums</span>.<span className="text-yellow-300">size</span>(); <span className="text-blue-300">i</span>++) {'{'}
-{'\n'}            <span className="text-green-400">int</span> <span className="text-blue-300">complement</span> = <span className="text-blue-300">target</span> - <span className="text-blue-300">nums</span>[<span className="text-blue-300">i</span>];
-{'\n'}            
-{'\n'}            <span className="text-blue-400">if</span> (<span className="text-blue-300">numMap</span>.<span className="text-yellow-300">find</span>(<span className="text-blue-300">complement</span>) != <span className="text-blue-300">numMap</span>.<span className="text-yellow-300">end</span>()) {'{'}
-{'\n'}                <span className="text-blue-400">return</span> {'{'}<span className="text-blue-300">numMap</span>[<span className="text-blue-300">complement</span>], <span className="text-blue-300">i</span>{'}'};
-{'\n'}            {'}'}
-{'\n'}            
-{'\n'}            <span className="text-blue-300">numMap</span>[<span className="text-blue-300">nums</span>[<span className="text-blue-300">i</span>]] = <span className="text-blue-300">i</span>;
-{'\n'}        {'}'}
-{'\n'}        
-{'\n'}        <span className="text-blue-400">return</span> {'{}'}; 
-{'\n'}    {'}'}
-{'\n'}{'}'};
+                )}
+
+                {activeTab === 'cpp' && solution.cppCode && (
+                  <pre className="bg-[#1e1e1e] text-gray-100 p-6 rounded-none overflow-x-auto">
+                    <code className="text-sm leading-relaxed whitespace-pre">
+                      {solution.cppCode}
                     </code>
                   </pre>
+                )}
+
+                {/* Show message if no code is available */}
+                {((activeTab === 'python' && !solution.pythonCode && !solution.solution) ||
+                  (activeTab === 'cpp' && !solution.cppCode)) && (
+                  <div className="p-6 text-center text-muted-foreground">
+                    <p>No {activeTab === 'python' ? 'Python' : 'C++'} solution available yet.</p>
+                  </div>
                 )}
               </div>
             </CardContent>

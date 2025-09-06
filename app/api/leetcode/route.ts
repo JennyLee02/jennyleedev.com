@@ -18,41 +18,55 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
     const {
       title,
       number,
       difficulty,
       category,
       description,
-      approach,
+      examples,
+      constraints,
+      followUp,
       solution,
+      pythonCode,
+      cppCode,
+      approach,
       timeComplexity,
       timeComplexityExplanation,
       spaceComplexity,
       spaceComplexityExplanation,
       tags,
       leetcodeUrl
-    } = await request.json();
+    } = body;
 
-    const leetcodeSolution = await prisma.leetcodeSolution.create({
+    // Convert tags string to array
+    const tagsArray = tags ? tags.split(',').map((tag: string) => tag.trim()) : [];
+
+    const newSolution = await prisma.leetcodeSolution.create({
       data: {
         title,
         number: parseInt(number),
         difficulty,
         category,
         description,
-        approach,
+        ...(examples && { examples }),
+        ...(constraints && { constraints }),
+        ...(followUp && { followUp }),
         solution,
+        pythonCode,
+        cppCode,
+        approach,
         timeComplexity,
-        timeComplexityExplanation: timeComplexityExplanation || null,
+        timeComplexityExplanation,
         spaceComplexity,
-        spaceComplexityExplanation: spaceComplexityExplanation || null,
-        tags,
-        leetcodeUrl: leetcodeUrl || null
-      },
+        spaceComplexityExplanation,
+        tags: tagsArray,
+        leetcodeUrl
+      } as any,
     });
 
-    return NextResponse.json(leetcodeSolution, { status: 201 });
+    return NextResponse.json(newSolution, { status: 201 });
   } catch (error) {
     console.error("Error creating solution:", error);
     return NextResponse.json(

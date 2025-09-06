@@ -13,13 +13,20 @@ interface LeetcodeSolution {
   difficulty: "Easy" | "Medium" | "Hard";
   category: string;
   description: string;
+  examples?: {input: string; output: string; explanation?: string}[];
+  constraints?: string;
+  followUp?: string;
+  solution?: string;
+  pythonCode?: string;
+  cppCode?: string;
   approach: string;
-  solution: string;
   timeComplexity: string;
   timeComplexityExplanation?: string;
   spaceComplexity: string;
   spaceComplexityExplanation?: string;
   tags: string[];
+  leetcodeUrl?: string;
+  neetcodeUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

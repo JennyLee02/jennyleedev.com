@@ -44,8 +44,13 @@ model LeetcodeSolution {
   title       String
   difficulty  String
   number      Int
-  description String
-  solution    String
+  description String   // Main problem description (without examples)
+  examples    Json?    // Array of example objects: [{input: string, output: string, explanation?: string}]
+  constraints String?  // Problem constraints
+  followUp    String?  // Follow-up questions
+  solution    String?  // Keep for backward compatibility
+  pythonCode  String?  // Python solution code
+  cppCode     String?  // C++ solution code
   approach    String
   timeComplexity String
   timeComplexityExplanation String?
