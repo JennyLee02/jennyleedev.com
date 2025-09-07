@@ -12,6 +12,8 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Chatbot from "@/components/chatbot"
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface LeetcodeSolution {
   id: string;
@@ -43,6 +45,22 @@ export default function LeetCodeSolutionPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'python' | 'cpp'>('python')
+
+  // Set default active tab based on available code
+  useEffect(() => {
+    if (solution) {
+      const hasPython = solution.pythonCode || solution.solution;
+      const hasCpp = solution.cppCode;
+      
+      if (hasPython && hasCpp) {
+        setActiveTab('python'); // Prefer Python when both are available
+      } else if (hasCpp && !hasPython) {
+        setActiveTab('cpp'); // Show C++ if only C++ is available
+      } else if (hasPython) {
+        setActiveTab('python'); // Show Python if only Python is available
+      }
+    }
+  }, [solution]);
 
   useEffect(() => {
     const fetchSolution = async () => {
@@ -466,63 +484,112 @@ export default function LeetCodeSolutionPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="border-b bg-muted/10">
-                <div className="flex">
-                  {(solution.pythonCode || solution.solution) && (
+              {/* Only show tabs if there are multiple code options */}
+              {((solution.pythonCode || solution.solution) && solution.cppCode) && (
+                <div className="border-b bg-muted/10">
+                  <div className="flex">
                     <button
                       onClick={() => setActiveTab('python')}
                       className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === 'python'
-                          ? 'border-primary text-primary'
-                          : 'border-transparent text-muted-foreground hover:text-foreground'
+                          ? 'border-primary text-primary bg-background/50'
+                          : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-background/20'
                       }`}
                     >
-                      Python
+                      <span className="flex items-center gap-2">
+                        🐍 Python
+                      </span>
                     </button>
-                  )}
-                  {solution.cppCode && (
                     <button
                       onClick={() => setActiveTab('cpp')}
                       className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === 'cpp'
-                          ? 'border-primary text-primary'
-                          : 'border-transparent text-muted-foreground hover:text-foreground'
+                          ? 'border-primary text-primary bg-background/50'
+                          : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-background/20'
                       }`}
                     >
-                      C++
+                      <span className="flex items-center gap-2">
+                        ⚡ C++
+                      </span>
                     </button>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="relative">
-                <div className="absolute top-4 right-4 z-10">
-                  <span className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
-                    {activeTab === 'python' ? 'Python' : 'C++'}
+                {/* Language badge */}
+                <div className="absolute top-3 right-3 z-10">
+                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                    activeTab === 'python' 
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-orange-600 text-white'
+                  }`}>
+                    {activeTab === 'python' ? '🐍 Python' : '⚡ C++'}
                   </span>
                 </div>
 
+                {/* Python Code */}
                 {activeTab === 'python' && (solution.pythonCode || solution.solution) && (
-                  <pre className="bg-[#1e1e1e] text-gray-100 p-6 rounded-none overflow-x-auto">
-                    <code className="text-sm leading-relaxed whitespace-pre">
-                      {solution.pythonCode || solution.solution}
-                    </code>
-                  </pre>
+                  <div className="relative">
+                    <SyntaxHighlighter
+                      language="python"
+                      style={vscDarkPlus}
+                      customStyle={{
+                        margin: 0,
+                        borderRadius: 0,
+                        background: '#1e1e1e',
+                        padding: '1.5rem',
+                        fontSize: '14px',
+                        lineHeight: '1.6'
+                      }}
+                      showLineNumbers={true}
+                      lineNumberStyle={{
+                        color: '#6e7681',
+                        backgroundColor: '#161b22',
+                        paddingRight: '1em',
+                        marginRight: '1em',
+                        borderRight: '1px solid #30363d'
+                      }}
+                    >
+                      {solution.pythonCode || solution.solution || ''}
+                    </SyntaxHighlighter>
+                  </div>
                 )}
 
+                {/* C++ Code */}
                 {activeTab === 'cpp' && solution.cppCode && (
-                  <pre className="bg-[#1e1e1e] text-gray-100 p-6 rounded-none overflow-x-auto">
-                    <code className="text-sm leading-relaxed whitespace-pre">
+                  <div className="relative">
+                    <SyntaxHighlighter
+                      language="cpp"
+                      style={vscDarkPlus}
+                      customStyle={{
+                        margin: 0,
+                        borderRadius: 0,
+                        background: '#1e1e1e',
+                        padding: '1.5rem',
+                        fontSize: '14px',
+                        lineHeight: '1.6'
+                      }}
+                      showLineNumbers={true}
+                      lineNumberStyle={{
+                        color: '#6e7681',
+                        backgroundColor: '#161b22',
+                        paddingRight: '1em',
+                        marginRight: '1em',
+                        borderRight: '1px solid #30363d'
+                      }}
+                    >
                       {solution.cppCode}
-                    </code>
-                  </pre>
+                    </SyntaxHighlighter>
+                  </div>
                 )}
 
-                {/* Show message if no code is available */}
-                {((activeTab === 'python' && !solution.pythonCode && !solution.solution) ||
-                  (activeTab === 'cpp' && !solution.cppCode)) && (
-                  <div className="p-6 text-center text-muted-foreground">
-                    <p>No {activeTab === 'python' ? 'Python' : 'C++'} solution available yet.</p>
+                {/* Show message if no code is available at all */}
+                {!solution.pythonCode && !solution.solution && !solution.cppCode && (
+                  <div className="p-8 text-center text-muted-foreground bg-muted/10">
+                    <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-medium mb-2">No code solution available yet</h3>
+                    <p className="text-sm">The solution code will be added soon.</p>
                   </div>
                 )}
               </div>

@@ -10,8 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, ArrowLeft, Hash, Clock, Target, Cpu, Calendar, ExternalLink, Lightbulb, Download, X, Plus } from "lucide-react";
+import { Save, ArrowLeft, Hash, Clock, Target, Cpu, Calendar, ExternalLink, Lightbulb, Download, X, Plus, Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function CreateLeetcodePage() {
   const router = useRouter();
@@ -20,6 +22,7 @@ export default function CreateLeetcodePage() {
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [examples, setExamples] = useState<{input: string, output: string, explanation?: string}[]>([{input: "", output: "", explanation: ""}]);
+  const [showCodePreview, setShowCodePreview] = useState<{python: boolean, cpp: boolean}>({python: false, cpp: false});
 
   const [formData, setFormData] = useState({
     title: "",
@@ -515,7 +518,50 @@ export default function CreateLeetcodePage() {
               </TabsList>
               
               <TabsContent value="python" className="mt-4">
-                <Label htmlFor="pythonCode">Python Solution</Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="pythonCode" className="flex items-center gap-2">
+                    🐍 Python Solution
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowCodePreview(prev => ({...prev, python: !prev.python}))}
+                    className="flex items-center gap-2"
+                  >
+                    {showCodePreview.python ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showCodePreview.python ? 'Hide Preview' : 'Show Preview'}
+                  </Button>
+                </div>
+                
+                {showCodePreview.python && formData.pythonCode && (
+                  <div className="mb-4 border rounded-lg overflow-hidden">
+                    <div className="bg-muted/50 px-3 py-2 text-sm font-medium text-muted-foreground border-b">
+                      Preview
+                    </div>
+                    <SyntaxHighlighter
+                      language="python"
+                      style={vscDarkPlus}
+                      customStyle={{
+                        margin: 0,
+                        background: '#1e1e1e',
+                        fontSize: '13px',
+                        lineHeight: '1.5'
+                      }}
+                      showLineNumbers={true}
+                      lineNumberStyle={{
+                        color: '#6e7681',
+                        backgroundColor: '#161b22',
+                        paddingRight: '1em',
+                        marginRight: '1em',
+                        borderRight: '1px solid #30363d'
+                      }}
+                    >
+                      {formData.pythonCode}
+                    </SyntaxHighlighter>
+                  </div>
+                )}
+                
                 <Textarea
                   id="pythonCode"
                   name="pythonCode"
@@ -526,12 +572,55 @@ export default function CreateLeetcodePage() {
         # Your Python solution here
         pass"
                   rows={15}
-                  className="mt-2 font-mono text-sm"
+                  className="font-mono text-sm bg-slate-50 dark:bg-slate-900"
                 />
               </TabsContent>
               
               <TabsContent value="cpp" className="mt-4">
-                <Label htmlFor="cppCode">C++ Solution</Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="cppCode" className="flex items-center gap-2">
+                    ⚡ C++ Solution
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowCodePreview(prev => ({...prev, cpp: !prev.cpp}))}
+                    className="flex items-center gap-2"
+                  >
+                    {showCodePreview.cpp ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showCodePreview.cpp ? 'Hide Preview' : 'Show Preview'}
+                  </Button>
+                </div>
+                
+                {showCodePreview.cpp && formData.cppCode && (
+                  <div className="mb-4 border rounded-lg overflow-hidden">
+                    <div className="bg-muted/50 px-3 py-2 text-sm font-medium text-muted-foreground border-b">
+                      Preview
+                    </div>
+                    <SyntaxHighlighter
+                      language="cpp"
+                      style={vscDarkPlus}
+                      customStyle={{
+                        margin: 0,
+                        background: '#1e1e1e',
+                        fontSize: '13px',
+                        lineHeight: '1.5'
+                      }}
+                      showLineNumbers={true}
+                      lineNumberStyle={{
+                        color: '#6e7681',
+                        backgroundColor: '#161b22',
+                        paddingRight: '1em',
+                        marginRight: '1em',
+                        borderRight: '1px solid #30363d'
+                      }}
+                    >
+                      {formData.cppCode}
+                    </SyntaxHighlighter>
+                  </div>
+                )}
+                
                 <Textarea
                   id="cppCode"
                   name="cppCode"
@@ -545,7 +634,7 @@ public:
     }
 };"
                   rows={15}
-                  className="mt-2 font-mono text-sm"
+                  className="font-mono text-sm bg-slate-50 dark:bg-slate-900"
                 />
               </TabsContent>
             </Tabs>
