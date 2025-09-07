@@ -241,7 +241,9 @@ export default function EditLeetcodePage() {
       if (response.ok) {
         router.push("/admin/leetcode");
       } else {
-        alert("Failed to update solution");
+        const errorData = await response.json();
+        console.error("Server error:", errorData);
+        alert(`Failed to update solution: ${errorData.details || errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error updating solution:", error);

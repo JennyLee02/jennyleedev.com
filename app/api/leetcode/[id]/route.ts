@@ -76,10 +76,10 @@ export async function PUT(
       leetcodeUrl
     } = body;
 
-    // Convert tags string to array if it's a string
-    const tagsArray = typeof tags === 'string' 
-      ? tags.split(',').map((tag: string) => tag.trim()) 
-      : tags;
+    // Convert tags to array (handle both string and array inputs)
+    const tagsArray = Array.isArray(tags) 
+      ? tags 
+      : tags ? tags.split(',').map((tag: string) => tag.trim()) : [];
 
     const updatedSolution = await prisma.leetcodeSolution.update({
       where: { id },

@@ -40,13 +40,15 @@ export async function POST(request: NextRequest) {
       leetcodeUrl
     } = body;
 
-    // Convert tags string to array
-    const tagsArray = tags ? tags.split(',').map((tag: string) => tag.trim()) : [];
+    // Convert tags to array (handle both string and array inputs)
+    const tagsArray = Array.isArray(tags) 
+      ? tags 
+      : tags ? tags.split(',').map((tag: string) => tag.trim()) : [];
 
     const newSolution = await prisma.leetcodeSolution.create({
       data: {
         title,
-        number: parseInt(number),
+        number: typeof number === 'string' ? parseInt(number) : number,
         difficulty,
         category,
         description,
@@ -69,8 +71,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newSolution, { status: 201 });
   } catch (error) {
     console.error("Error creating solution:", error);
+    
+    // Provide more specific error messages
+    let errorMessage = "Failed to create solution";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
     return NextResponse.json(
-      { error: "Failed to create solution" },
+      { 
+        error: "Failed to create solution", 
+        details: errorMessage,
+        debug: process.env.NODE_ENV === 'development' ? error : undefined
+      },
       { status: 500 }
     );
   }
