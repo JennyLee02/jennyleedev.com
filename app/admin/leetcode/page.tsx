@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pencil, Trash2, Plus, Eye, BarChart3 } from "lucide-react";
+import { Pencil, Trash2, Plus, Eye, BarChart3, ArrowLeft } from "lucide-react";
 
 interface LeetcodeSolution {
   id: string;
@@ -97,6 +97,16 @@ export default function LeetcodeAdminPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Back Button */}
+      <div className="mb-6">
+        <Button variant="ghost" asChild className="hover:bg-muted">
+          <Link href="/admin" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Admin Dashboard
+          </Link>
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">🧩 LeetCode Solutions</h1>
